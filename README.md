@@ -39,6 +39,8 @@
 
 1. Basics
 
+    - basics: [cpp](./basics/basics.cpp) & [py](./basics/basics.py)
+
 1. Intermediate
 
 1. Advanced
