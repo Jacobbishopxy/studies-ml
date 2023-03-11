@@ -36,7 +36,11 @@
 main.dSYM
 main
 
-# lib
+# LaTeX
+**/out/*
+!/out/studies-ml.pdf
 
+# lib & data
 libtorch
 data
+
