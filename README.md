@@ -33,6 +33,10 @@
 
 1. Starter
 
+    - [Pytorch C++ API](./starter/introduction.cpp)
+
+    - [Using the PyTorch C++ Frontend](./starter/using_cpp_frontend.cpp)
+
 1. Basics
 
 1. Intermediate
