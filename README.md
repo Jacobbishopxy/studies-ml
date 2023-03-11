@@ -41,6 +41,8 @@
 
     - basics: [cpp](./basics/basics.cpp) & [py](./basics/basics.py)
 
+    - linear regression: [cpp](./basics/linear_regression.cpp) & [py](./basics/linear_regression.py)
+
 1. Intermediate
 
 1. Advanced
