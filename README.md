@@ -43,6 +43,8 @@
 
     - linear regression: [cpp](./basics/linear_regression.cpp) & [py](./basics/linear_regression.py)
 
+    - logistic regression: [cpp](./basics//logistic_regression.cpp) & [py](./basics/logistic_regression.cpp)
+
 1. Intermediate
 
 1. Advanced
