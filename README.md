@@ -53,6 +53,8 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 
     - logistic regression: [cpp](./basics//logistic_regression.cpp) & [py](./basics/logistic_regression.cpp)
 
+    - feed forward neural net: [cpp](./basics/feed_forward_neural_network.cpp) & [py](./basics/feed_forward_neural_network.py)
+
 1. Intermediate
 
 1. Advanced
