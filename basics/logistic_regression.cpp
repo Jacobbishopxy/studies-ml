@@ -1,7 +1,7 @@
 /**
- * @file:	logistic_regression.cpp
+ * @file:	  logistic_regression.cpp
  * @author:	Jacob Xie
- * @date:	2023/03/11 12:52:19 Saturday
+ * @date:	  2023/03/11 12:52:19 Saturday
  * @brief:
  *
  * https://github.com/prabhuomkar/pytorch-cpp/blob/master/tutorials/basics/logistic_regression/main.cpp
@@ -9,6 +9,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 #include <torch/torch.h>
 
 int main(int argc, char** argv)
@@ -35,7 +36,7 @@ int main(int argc, char** argv)
   // Data
   // ================================================================================================
 
-  const std::string MNIST_data_path = "./data/mnist";
+  std::string MNIST_data_path = std::string{_DATASETS_PATH} + "/mnist";
 
   // MNIST 数据集（图片与标签）
   auto train_dataset = torch::data::datasets::MNIST(MNIST_data_path)
@@ -66,7 +67,6 @@ int main(int argc, char** argv)
 
   // 对数回归模型
   torch::nn::Linear model(input_size, num_classes);
-
   model->to(device);
 
   // 损失与优化器

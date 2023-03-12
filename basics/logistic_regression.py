@@ -12,17 +12,19 @@ import torchvision
 import torchvision.transforms as transforms
 
 
+data_path = "../data/mnist"
+
 input_size = 784
-num_calsses = 10
+num_classes = 10
 num_epochs = 5
 batch_size = 100
 learning_rate = 0.001
 
 train_dataset = torchvision.datasets.MNIST(
-    root="./data/mnist", train=True, transform=transforms.ToTensor(), download=True
+    root=data_path, train=True, transform=transforms.ToTensor(), download=True
 )
 test_dataset = torchvision.datasets.MNIST(
-    root="./data/mnist",
+    root=data_path,
     train=False,
     transform=transforms.ToTensor(),
 )
@@ -34,7 +36,7 @@ test_loader = torch.utils.data.DataLoader(
     dataset=test_dataset, batch_size=batch_size, shuffle=False
 )
 
-model = nn.Linear(input_size, num_calsses)
+model = nn.Linear(input_size, num_classes)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)

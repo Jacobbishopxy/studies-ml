@@ -1,4 +1,6 @@
 
+add_executable(const_test const_test.cpp)
+
 add_executable(example-app example-app.cpp)
 target_link_libraries(example-app "${TORCH_LIBRARIES}")
 
