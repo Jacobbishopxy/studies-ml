@@ -5,6 +5,8 @@
  * @brief:
  *
  * https://github.com/prabhuomkar/pytorch-cpp/blob/master/tutorials/basics/feedforward_neural_network/src/main.cpp
+ *
+ * 前馈神经网络
  **/
 
 #include <iomanip>

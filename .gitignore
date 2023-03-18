@@ -37,6 +37,7 @@ main.dSYM
 main
 
 # LaTeX
+*.log
 **/out/*
 !/out/studies-ml.pdf
 
