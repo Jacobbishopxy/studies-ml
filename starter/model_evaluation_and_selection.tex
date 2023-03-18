@@ -1,7 +1,156 @@
+% @file:		model_evaluation_and_selection.tex
+% @author:	Jacob Xie
+% @date:		2023/03/17 22:13:19 Friday
+% @brief:
+
+
 \documentclass[../studies-ml.tex]{subfiles}
 
 \begin{document}
 
+\subsection{误差与拟合}
 
+\begin{center}
+  \begin{tabular}{ |p{3cm}||p{4cm}|p{6cm}|  }
+    \hline
+    \multicolumn{3}{|c|}{\textbf{误差与拟合}}                                     \\
+    \hline
+    名称   & 英文                   & 描述                                         \\
+    \hline
+    错误率  & error rate           & 如果在 $m$ 个样本中有 $a$ 个样本分类错误，则错误率 $E = a/m$   \\
+    \hline
+    精度   & accuracy             & $1 - a/m$                                  \\
+    \hline
+    误差   & error                & 学习器的实际预输出与样本的真实输出之间的差异                     \\
+    \hline
+    训练误差 & training error       & \multirow{2}{*}{学习器在训练集上的误差}               \\
+    \cline{1-2}
+    经验误差 & empirical error      &                                            \\
+    \hline
+    泛化误差 & generalization error & 在新样本上的误差                                   \\
+    \hline
+    过拟合  & over fitting         & 学习器把训练样本自身的一些特点当做了所有潜在样本都会具有的一般性质，导致泛化性能下降 \\
+    \hline
+    欠拟合  & under fitting        & 与过拟合相对应                                    \\
+    \hline
+    模型选择 & model selection      &                                            \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\subsection{评估方法}
+
+\begin{center}
+  \begin{tabular}{ |p{3cm}||p{4cm}|p{6cm}|  }
+    \hline
+    \multicolumn{3}{|c|}{\textbf{评估方法}}                                                            \\
+    \hline
+    测试集            & testing set             &                                                     \\
+    \hline
+    测试误差           & testing error           &                                                     \\
+    \hline
+    \textbf{留出法}   & hold-out                & 直接将数据集 $D$ 划分为两个互斥的集合，其中一个集合作为训练集 $S$，另一个作为测试集 $T$，
+    即 $D = S \cup T, S \cap T = \emptyset$。在 $S$ 上训练出模型后，用 $T$ 来评估其测试误差，作为对泛化误差的估计。                \\
+    \hline
+    采样             & sampling                &                                                     \\
+    \hline
+    分层采样           & stratified sampling     & 保留类别比例的采样方式                                         \\
+    \hline
+    保真性            & fidelity                &                                                     \\
+    \hline
+    \textbf{交叉验证法} & cross validation        & 将数据集 $D$ 划分为 $k$ 个大小相似的互斥子集，
+    即 $D = D_1 \cup D_2 \cup \dots \cup D_k, D_i \cap D_j = \emptyset \ (i \ne j)$。
+    每个子集 $D_i$ 都尽可能保持数据分布的一致性，即从 $D$ 中通过分层采样的到。然后每次用 $k-1$ 个子集的并集作为训练集，
+    余下的那个子集作为测试集；这样就可获得 $k$ 组训练/测试集，从而可进行 $k$ 次训练和测试，
+    最终返回的是这 $k$ 个测试结果的均值。                                                                          \\
+    \hline
+    k 折交叉验证        & k-fold cross validation &                                                     \\
+    \hline
+    留一法            & leave-one-out           &                                                     \\
+    \hline
+    \textbf{自助法}   & bootstrapping           &                                                     \\
+    \hline
+    自助采样法          & bootstrap sampling      &                                                     \\
+    \hline
+    包外估计           & out-of-bag estimate     &                                                     \\
+    \hline
+    参数             & parameter               &                                                     \\
+    \hline
+    调参             & parameter tuning        &                                                     \\
+    \hline
+    验证集            & validation set          &                                                     \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\subsection{性能度量}
+
+\subsubsection{错误率与精度}
+
+性能度量（performance measure）：衡量模型泛化能力的评价标准。
+
+均方误差（mean squared error）：
+
+\refstepcounter{equation}
+\begin{equation}
+  E(f; D) = \frac{1}{m} \sum_{i=1}^{m} (f(\pmb{x}_i) - y_i)^2
+\end{equation}
+
+对于数据分布 $\mathcal{D}$ 和概率密度函数 $p(\cdot)$，均方误差可描述为：
+
+\begin{equation}
+  E(f; \mathcal{D}) = \int_{\pmb{x}~\mathcal{D}} (f(\pmb{x} - y)^2) p(\pmb{x}) \,d\pmb{x}
+\end{equation}
+
+错误率是分类错误的样本数占样本总数的比例：
+
+\begin{equation}
+  E(f; D) = \frac{1}{m} \sum_{i=1}^{m} \mathbb{I} (f(\pmb{x}_i) \ne y_i)
+\end{equation}
+
+精度则是分类正确的样本数占样本总数的比例：
+
+\begin{equation}
+  \begin{split}
+    acc(f; D) & = \frac{1}{m} \sum_{i=1}^{m} \mathbb{I} (f(\pmb{x}_i) = y_i) \\
+    & = 1 - E(f; D)
+  \end{split}
+\end{equation}
+
+对于数据分布 $\mathcal{D}$ 和概率密度函数 $p(\cdot)$，错误率与精度可分别描述为
+
+\begin{equation}
+  E(f; \mathcal{D}) = \int_{\pmb{x}~\mathcal{D}} \mathbb{I} (f(\pmb{x}) \ne y) p(\pmb{x}) \, d\pmb{x}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+    acc(f; \mathcal{D}) & = \int_{\pmb{x}~\mathcal{D}} \mathbb{I} (f(\pmb{x}) = y) p(\pmb{x}) \, d\pmb{x} \\
+    & = 1 - E(f; \mathcal{D})
+  \end{split}
+\end{equation}
+
+% \subsubsection{查准率、查全率与 F1}
+
+% \subsubsection{ROC 与 AUC}
+
+% \subsubsection{代价敏感错误率与代价曲线}
+
+% \subsection{比较检验}
+
+% \subsubsection{假设检验}
+
+% \subsubsection{交叉检验 t 检验}
+
+% \subsubsection{McNemar 检验}
+
+% \subsubsection{Friedman 检验与 Nemenyi 检验}
+
+\setcounter{subsection}{4}
+\subsection{偏差与方差}
+
+偏差-方差分解（bias-variance decomposition）：对学习算法的期望泛化错误率进行拆解。
+
+偏差-方差窘境（bias-variance dilemma）
 
 \end{document}

@@ -9,6 +9,8 @@
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{lmodern}
 \usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \graphicspath{\subfix{./images/}}
@@ -22,6 +24,7 @@
 \input{commands.tex}
 
 \setlength\parindent{0pt}
+\let\emptyset\varnothing
 
 % ================================================================================================
 % Main
@@ -31,7 +34,7 @@
 \author{Jacob Xie}
 \date{2023-03-11}
 
-
+\numberwithin{equation}{section}
 \begin{document}
 
 \maketitle

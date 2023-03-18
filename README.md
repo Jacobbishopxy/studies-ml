@@ -39,6 +39,8 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 
 1. LaTeX: [Main entry](./studies-ml.tex) & [PDF](./out/studies-ml.pdf)
 
+    - [Model evaluation and selection](./starter/model_evaluation_and_selection.tex)
+
 1. Starter
 
     - [Pytorch C++ API](./starter/introduction.cpp)
