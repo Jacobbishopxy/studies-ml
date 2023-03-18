@@ -41,6 +41,12 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 
     - [Model evaluation and selection](./starter/model_evaluation_and_selection.tex)
 
+    - [Linear model](./basics/linear_model.tex)
+
+    - Decision tree
+
+    - [Neural networks](./intermediate/neural_networks.tex)
+
 1. Starter
 
     - [Pytorch C++ API](./starter/introduction.cpp)
