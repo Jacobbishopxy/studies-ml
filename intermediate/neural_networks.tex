@@ -7,4 +7,196 @@
 
 \begin{document}
 
+\subsection{神经元模型}
+
+\begin{center}
+  \begin{tabular}{ |p{3cm}||p{4cm}|p{6cm}|  }
+    \hline
+    \multicolumn{3}{|c|}{\textbf{神经元模型}}                                               \\
+    \hline
+    名称   & 英文                  & 描述                                                    \\
+    \hline
+    神经网络 & neural networks     & 由具有适应性的简单单元组成的广泛并行互联的网络，它的组织能够模拟生物神经系统对真实世界物体所作出的交互反应 \\
+    \hline
+    神经元  & neuron              & 神经网络中最基本的成分                                           \\
+    \hline
+    阈值   & threshold           & 公式中记作 $\theta$                                        \\
+    \hline
+    连接   & connection          &                                                       \\
+    \hline
+    激活函数 & activation function & 处理以产生神经元的输出                                           \\
+    \hline
+    挤压函数 & squashing function  &                                                       \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\subsection{感知机与多层网络}
+
+感知机（Perceptron）由两层神经元组成。如图示，输入层接受外界输入信号后传递给输出层，输出层是 M-P 神经元，也称阈值逻辑单元
+（threshold logic unit），其中 $y = f(\sum_i w_i x_i - \theta)$，而 $f$ 为激活函数。
+
+\begin{center}
+  \begin{tikzpicture}[shorten >=1pt,->]
+    \tikzstyle{unit}=[draw,shape=circle,minimum size=1]
+
+    \node[unit](p) at (0,1){};
+    \node[unit](x1) at (-0.8,0){};
+    \node[unit](x2) at (0.8,0){};
+    \node[below] at (x1.south){$x_1$};
+    \node[below] at (x2.south){$x_2$};
+    \node[below,left=0.35,yshift=-8] at (p.south){$w_1$};
+    \node[below,right=0.35,yshift=-8] at (p.south){$w_2$};
+
+    \draw [->] (x1) -- (p);
+    \draw [->] (x2) -- (p);
+    \draw (p) -- ++(0,1) node[xshift=-10]{$y$};
+
+    \node [align=center, right=1.6] at (p) {\footnotesize{输出层}};
+    \node [align=center, right=0.8] at (x2) {\footnotesize{输入层}};
+  \end{tikzpicture}
+\end{center}
+
+一般而言，给定训练数据集，权重 $w_i\, (i=1,2,\dots,n)$ 以及阈值 $\theta$ 可通过学习得到。而阈值 $\theta$ 可视为一个固定输入
+为 -1.0 的哑结点（dummy node）所对应的链接权重 $w_{n+1}$，因此权重和阈值的学习就可以统一为权重的学习。感知机的学习规则非常简单，
+对训练样例 $(\pmb{x},y)$ 而言，如果当前感知机的输出位 $\hat{y}$，则感知机权重将这样调整：
+
+\begin{equation}
+  w_i \leftarrow w_i + \Delta w_i
+\end{equation}
+
+\begin{equation}
+  \Delta w_i = \eta (y - \hat{y}) x_i
+\end{equation}
+
+其中 $\eta \in (0,1)$ 称为学习率（learning rate）。公式 5.2 为感知机学习算法中的参数更新式。
+
+\begin{enumerate}[I]
+  \item \textbf{感知机模型}
+
+        感知机模型的式可表示为：
+
+        \begin{align*}
+          \begin{split}
+            y & = f \Biggl( \sum_{i=1}^{n} w_i x_i - \theta \Biggr) \\
+            & = f(\pmb{w}^T \pmb{x} - \theta)
+          \end{split}
+        \end{align*}
+
+        其中，$x \in \mathbb{R}^n$ 即样本的特征向量，是感知机模型的输入；$\pmb{w}, \theta$ 是感知机模型的参数，权重 $w \in \mathbb{R}^n$，
+        $\theta$ 为阈值。假定 $f$ 为阶跃函数，那么感知机模型的式可以表示为：
+
+        \begin{equation*}
+          y = \varepsilon (\pmb{w}^T \pmb{x} - \theta) = \begin{cases}
+            1,\quad \pmb{w}^T \pmb{x} - \theta \ge 0; \\
+            0,\quad \pmb{w}^T \pmb{x} - \theta < 0.
+          \end{cases}
+        \end{equation*}
+
+        由于 $n$ 维空间中的超平面方程为
+        \[
+          w_1 x_1 + w_2 x_2 + \cdots + w_n x_n + b = \pmb{w}^T \pmb{x} + b = 0
+        \]
+
+        因此感知机模型式中的 $\pmb{w}^T \pmb{x} - \theta$ 可视为 $n$ 维空间中的一个超平面，将 $n$ 维空间划分为 $\pmb{w}^T \pmb{x} - \theta \ge 0$
+        与 $\pmb{w}^T \pmb{x} - \theta < 0$ 的两个子空间（\textit{试想一下三维空间下的一个平面将空间切分为两部分}）。
+        那么落在前一个子空间的样本对应的模型输出值为 1，而后者为 0，如此实现了分类功能。
+
+  \item \textbf{学习策略}
+
+        给定一个线性可分的数据集 $T$，感知机的学习目标是求得能对数据集 $T$ 中的正负样本完全正确划分的分离超平面
+        \[ \pmb{w}^T \pmb{x} - \theta = 0 \]
+
+        假设此时误分类样本集合为 $M \subset T$，对任意一个误分类样本 $(\pmb{x},y) \in M$ 而言，当 $\pmb{w}^T \pmb{x} - \theta \ge 0$ 时，
+        模型输出值为 $\hat{y} = 1$，样本真实标记为 $y = 0$；反之亦然。综上，以下式恒成立：
+        \[ (\hat{y} - y)(\pmb{w}^T \pmb{x} - \theta) \ge 0 \]
+
+        因此对于给定数据集 $T$，其损失函数可以定义为
+        \[ L(\pmb{w}, \theta) = \sum_{\pmb{x} \in M} (\hat{y} - y)(\pmb{w}^T \pmb{x} - \theta) \]
+
+        非负之和显然非负，因此损失函数为非负。当没有误分类点时，损失函数的值为 $0$；误分类点越少，误分类点离超平面越近，损失函数值就越小。
+        因此对于给定的数据集 $T$，损失函数 $L(\pmb{w}, \theta)$ 是关于 $\pmb{w}, \theta$ 的连续可导函数（注意是关于 $\pmb{w}, \theta$
+        的可导，意味着之后将要对其进行梯度下降算法，即对其使用导数计算）。
+
+        连续：
+        \[
+          \lim_{x \to x_0} f(x) = f(x_0)
+        \]
+
+        可导：
+        \[
+          f'(x_0) = \lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} =
+          \lim_{\Delta x \to 0} \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}
+        \]
+
+  \item \textbf{学习算法}
+
+        感知机模型的学习问题可以转化为求解损失函数的最优化问题。给定数据集
+        \[ T = \{(\pmb{x}_1,y_1),(\pmb{x}_2,y_2),\cdots,(\pmb{x}_N,y_N),\} \]
+        其中 $\pmb{x}_i \in \mathbb{R}, y_i \in \{0,1\}$，求参数 $\pmb{w}, \theta$ 使得损失函数最小化：
+        \[
+          \min_{\pmb{w},\theta} L(\pmb{w},\theta) =
+          \min_{\pmb{w},\theta} \sum_{\pmb{x}_i \in M} (\hat{y}_i - y_i)(\pmb{w}^T \pmb{x} - \theta)
+        \]
+
+        其中 $M \subset T$ 为误分类样本集合。若将阈值 $\theta$ 视为一个固定输入为 $-1$ 的 “哑结点”（前文有提到），即：
+        \[ -\theta = -1 \cdot w_{n+1} = x_{n+1} \cdot w_{n+1} \]
+
+        那么 $\pmb{w}^T \pmb{x} - \theta$ 可简化为
+
+        \begin{align*}
+          \begin{split}
+            \pmb{w}^T \pmb{x} - \theta & = \sum_{j=1}^{n} w_j x_j + x_{n+1} \cdot w_{n+1} \\
+            &= \sum_{j=1}^{n+1} w_j x_j \\
+            &= \pmb{w}^T \pmb{x_i}
+          \end{split}
+        \end{align*}
+
+        其中 $\pmb{x_i} \in \mathbb{R}^{n+1},\, \pmb{w} \in \mathbb{R}^{n+1}$，有此可将最小化问题进一步简化：
+        \[
+          \min_{\pmb{w}} L(\pmb{w}) = \min_{\pmb{w}} \sum_{\pmb{x_i} \in M} (\hat{y}_i - y_i) \pmb{w}^T \pmb{x_i}
+        \]
+
+        假设误分类样本集合 $M$ 固定，那么可以求得损失函数 $L(\pmb{w})$ 的梯度
+        \[ \nabla_{\pmb{w}} L(\pmb{w}) = \sum_{\pmb{x_i} \in M} (\hat{y}_i - y_i) \pmb{x_i} \]
+
+        感知机的学习算法具体采用的是随机梯度下降法，即在最小化的过程中，不是一次使 $M$ 中所有误分类点的梯度下降，而是一次随机选取
+        一个误分类点，并使其梯度下降。所以权重 $\pmb{w}$ 的更新式为
+        \begin{gather*}
+          \pmb{w} \leftarrow \pmb{w} + \Delta \pmb{w}, \\
+          \delta \pmb{w} = -\eta (\hat{y}_i - y_i) \pmb{w} = \eta (y_i - \hat{y}_i) \pmb{w}
+        \end{gather*}
+
+        即 $\pmb{w}$ 中的某个分量 $w_i$ 的更新式即式 5.2。
+\end{enumerate}
+
+\begin{center}
+  \begin{tabular}{ |p{3cm}||p{4cm}|p{6cm}|  }
+    \hline
+    \multicolumn{3}{|c|}{\textbf{神经元模型}}                    \\
+    \hline
+    名称       & 英文                                      & 描述 \\
+    \hline
+    功能神经元    & functional neuron                       &    \\
+    \hline
+    线性可分     & linearly separable                      &    \\
+    \hline
+    收敛       & converge                                &    \\
+    \hline
+    震荡       & fluctuation                             &    \\
+    \hline
+    隐层或隐含层   & hidden layer                            &    \\
+    \hline
+    多层前馈神经网络 & multi-layer feedforward neural networks &    \\
+    \hline
+    连接权      & connection weight                       &    \\
+    \hline
+  \end{tabular}
+\end{center}
+
+
+\subsection{误差逆传播算法}
+
+%
+
 \end{document}
