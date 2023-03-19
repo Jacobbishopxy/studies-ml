@@ -19,6 +19,7 @@
 \usepackage{listings}
 \usepackage{enumerate}
 \usepackage{hyperref}
+\usepackage[most]{tcolorbox}
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage{subfiles}
@@ -28,6 +29,16 @@
 
 \setlength\parindent{0pt}
 \let\emptyset\varnothing
+
+\newtcolorbox{aquote}[1][]{%
+    colback=black!5,
+    colframe=black!5,
+    notitle,
+    sharp corners,
+    borderline west={2pt}{0pt}{cyan!80!black},
+    enhanced,
+    breakable,
+    }
 
 % ================================================================================================
 % Main

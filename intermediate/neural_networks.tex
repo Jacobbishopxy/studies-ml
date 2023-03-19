@@ -160,43 +160,250 @@
         假设误分类样本集合 $M$ 固定，那么可以求得损失函数 $L(\pmb{w})$ 的梯度
         \[ \nabla_{\pmb{w}} L(\pmb{w}) = \sum_{\pmb{x_i} \in M} (\hat{y}_i - y_i) \pmb{x_i} \]
 
-        感知机的学习算法具体采用的是随机梯度下降法，即在最小化的过程中，不是一次使 $M$ 中所有误分类点的梯度下降，而是一次随机选取
-        一个误分类点，并使其梯度下降。所以权重 $\pmb{w}$ 的更新式为
+        感知机的学习算法具体采用的是\textbf{随机梯度下降法}，即在最小化的过程中，不是一次使 $M$ 中所有误分类点的梯度下降，
+        而是一次随机选取一个误分类点，并使其梯度下降。所以权重 $\pmb{w}$ 的更新式为
         \begin{gather*}
           \pmb{w} \leftarrow \pmb{w} + \Delta \pmb{w}, \\
-          \delta \pmb{w} = -\eta (\hat{y}_i - y_i) \pmb{w} = \eta (y_i - \hat{y}_i) \pmb{w}
+          \Delta \pmb{w} = -\eta (\hat{y}_i - y_i) \pmb{w} = \eta (y_i - \hat{y}_i) \pmb{w}
         \end{gather*}
 
         即 $\pmb{w}$ 中的某个分量 $w_i$ 的更新式即式 5.2。
+
+        备注：这里随机的意义在于每次调整的权重 $w$ 不会对某个/些样本点产生依赖，即常说的“过拟合”。
 \end{enumerate}
 
+本章其余名词：
+
 \begin{center}
-  \begin{tabular}{ |p{3cm}||p{4cm}|p{6cm}|  }
+  \begin{tabular}{ |p{4cm}||p{7cm}|  }
     \hline
-    \multicolumn{3}{|c|}{\textbf{神经元模型}}                    \\
+    \multicolumn{2}{|c|}{\textbf{神经元模型}}               \\
     \hline
-    名称       & 英文                                      & 描述 \\
+    名称       & 英文                                      \\
     \hline
-    功能神经元    & functional neuron                       &    \\
+    功能神经元    & functional neuron                       \\
     \hline
-    线性可分     & linearly separable                      &    \\
+    线性可分     & linearly separable                      \\
     \hline
-    收敛       & converge                                &    \\
+    收敛       & converge                                \\
     \hline
-    震荡       & fluctuation                             &    \\
+    震荡       & fluctuation                             \\
     \hline
-    隐层或隐含层   & hidden layer                            &    \\
+    隐层或隐含层   & hidden layer                            \\
     \hline
-    多层前馈神经网络 & multi-layer feedforward neural networks &    \\
+    多层前馈神经网络 & multi-layer feedforward neural networks \\
     \hline
-    连接权      & connection weight                       &    \\
+    连接权      & connection weight                       \\
     \hline
   \end{tabular}
 \end{center}
 
+\newpage
 
 \subsection{误差逆传播算法}
 
-%
+误差逆传播算法（error BackPropagation，简称 BP）。
+
+给定训练集 $D = \{(\pmb{x}_1, \pmb{y}_1), (\pmb{x}_2, \pmb{y}_2),\dots,(\pmb{x}_m, \pmb{y}_m)\},\,
+  \pmb{x}_i \in \mathbb{R}^d,\, \pmb{y}_i \in \mathbb{R}^l$，即 input 为 $d$ 维，output $l$ 维。如图：
+
+\begin{center}
+  \tikzset{%
+    every neuron/.style={
+        circle,
+        draw,
+        minimum size=0.7cm
+      },
+    neuron missing/.style={
+        draw=none,
+        scale=2,
+        text width=0.444cm,
+        execute at begin node=\color{black}$\hdots$
+      },
+  }
+
+  \begin{tikzpicture}[x=1cm, y=1.5cm, >=stealth]
+
+    % ================================================================================================
+    % 神经元
+    % ================================================================================================
+    \foreach \m [count=\i] in {1,missing,2,missing,3}
+    \node [every neuron/.try, neuron \m/.try ] (output-\m) at (\i+2.22,4) {};
+
+    \foreach \m [count=\i] in {1,2,missing,3,missing,4}
+    \node [every neuron/.try, neuron \m/.try ] (hidden-\m) at (\i*1.5,2) {};
+
+    \foreach \m [count=\i] in {1,missing,2,missing,3}
+    \node [every neuron/.try, neuron \m/.try] (input-\m) at (\i+2.22,0) {};
+
+    % ================================================================================================
+    % 神经元标记
+    % ================================================================================================
+    \foreach \m [count=\i] in {1,j,l}
+    \node [above] at (output-\i.north) {$y_\m$};
+
+    \foreach \m [count=\i] in {1,2,h,q}
+    \node [above=0.1,right] at (hidden-\i.east) {$b_\m$};
+
+    \foreach \m [count=\i] in {1,i,d}
+    \node [below] at (input-\i.south) {$x_\m$};
+
+
+    % ================================================================================================
+    % 注解
+    % ================================================================================================
+    \draw [red,dashed,->] (output-2) -- ++(0.8,-0.35) -- ++(3.4,0)
+    node [below=0.33,right] {\shortstack{第 $j$ 个输出神经元的输入 \\ $\beta_j = \sum\limits_{h=1}^{q} w_{hj}b_h$}};
+
+    \draw [red,dashed,->] (hidden-3) -- ++(0.8,-0.45) -- ++(2.6,0)
+    node [below=0.33,right] {\shortstack{第 $h$ 个隐层神经元的输入 \\ $\alpha_j = \sum\limits_{i=1}^{d} v_{ih}x_i$}};
+
+    % ================================================================================================
+    % 连接
+    % ================================================================================================
+    \foreach \i in {1,...,4}
+    \foreach \j in {1,3}
+    \draw [-] (hidden-\i.north) -- (output-\j.south);
+
+    \foreach \i in {1,...,4}
+    \draw [red,-] (hidden-\i.north) -- (output-2.south);
+
+    \foreach \i in {1,...,3}
+    \foreach \j in {1,2,4}
+    \draw [-] (input-\i.north) -- (hidden-\j.south);
+
+    \foreach \i in {1,...,3}
+    \draw [red,-] (input-\i.north) -- (hidden-3.south);
+
+    % ================================================================================================
+    % 标记
+    % ================================================================================================
+    \foreach \m [count=\i] in {1,2,h,q}
+    \node [yshift=10,fill=white,text=red,scale=0.8] at (hidden-\i.north) {$w_{\m j}$};
+
+    \foreach \m [count=\i] in {1,i,d}
+    \node [yshift=10,fill=white,text=red,scale=0.8] at (input-\i.north) {$v_{\m j}$};
+
+    % ================================================================================================
+    % 注解
+    % ================================================================================================
+    \foreach \l [count=\i from 0] in {输入, 隐, 输出}
+    \node [align=center, left] at (0,\i*2) {\l 层};
+
+  \end{tikzpicture}
+\end{center}
+
+如图所示，该神经网络是一个拥有 $d$ 个输入神经元，$l$ 个输出神经元，$q$ 个隐层神经元的多层前馈网络结构。
+
+其中输出层第 $j$ 个神经元的阈值用 $\theta_j$ 表示，隐层第 $h$ 个神经元的阈值用 $\gamma_h$ 表示；
+输入层第 $i$ 个神经元与隐层第 $h$ 个神经元之间的连接权位 $v_{ih}$，隐层第 $h$ 个神经元与输出层第 $j$ 个神经元之间的连接权位 $w_{hj}$。
+
+其中隐层的第 $h$ 个神经元接收到的输入（图中输入层与隐层之间的三条红线所示）为 $\alpha_h = \sum_{i=1}^{d} v_{ih} x_i$；
+输出层的第 $j$ 个神经元接收到的输入（图中隐层与输出层之间的四条红线所示）为 $\beta_j = \sum_{h=1}^{q} w_{hj} b_h$，
+其中 $b_h$ 为隐层第 $h$ 个神经元的输出。
+
+对训练例 $(\pmb{x}_k, \pmb{y}_k)$ 假设神经网络的输出为 $\hat{\pmb{y}}_k = (\hat{y}_1^k,\hat{y}_2^k,\dots,\hat{y}_l^k,)$，即
+\begin{equation}
+  \hat{y}_j^k = f(\beta_j - \theta_j)
+\end{equation}
+
+这里的真实值 $y_j^k = (y_1^k,y_2^k,\dots,y_l^k)^2$，那么对于某第 i 个输出层的神经元而言，其均方误差即
+\[
+  \frac{(\hat{y}_i^k - y_i^k)}{2}
+\]
+那么将所有神经元加总，就有了网络在 $(\pmb{x}_k, \pmb{y}_k)$ 上的均方误差为：
+\begin{equation}
+  E_k = \frac{1}{2} \sum_{j=1}^{l} (\hat{y}_j^k - y_j^k)^2
+\end{equation}
+
+另外上图的网络中有 $(d + l + l) q + l$ 个参数需确定：输入层到隐层的 $d \times q$ 个权值、隐层到输出层的 $q \times l$ 个权值、
+$q$ 个隐层神经元的阈值、$l$ 个输出层神经元的阈值。BP 是一个迭代学习算法，在迭代的每一轮中采用广义的感知机学习规则对参数进行更新估计，
+即与式 5.1 类似，任意参数 $v$ 的更新估计式为
+\begin{equation}
+  v \leftarrow v + \Delta v.
+\end{equation}
+
+BP 算法基于 \textbf{梯度下降（gradient descent）} 策略，以目标的\textit{负}梯度方向\textit{对参数进行调整}。
+对式 5.4 的误差 $E_k$，给定学习率 $\eta$，有
+\begin{equation}
+  \Delta w_{hj} = -\eta \frac{\partial E_k}{\partial w_{hj}}
+\end{equation}
+
+这里提到的负梯度，是利用了导数趋近于零时可以得到最小值的特性，去求得均方误差 $E_k$ 的最小值。回顾上文中的感知机学习算法：
+\begin{aquote}
+  ...随机选取一个误分类点并使其梯度下降，所以权重 $\pmb{w}$ 的更新式为
+  \begin{gather*}
+    \pmb{w} \leftarrow \pmb{w} + \Delta \pmb{w}, \\
+    \Delta \pmb{w} = -\eta (\hat{y}_i - y_i) \pmb{w} = \eta (y_i - \hat{y}_i) \pmb{w}
+  \end{gather*}
+\end{aquote}
+
+式 5.6 与感知机的最小化损失函数的不同之处在于：感知机是有两层神经元构成的，且输出层只有一个神经元，因此只需要考虑一层的权重变化，
+即 $(\hat{y}_i - y_i) \pmb{w}$；而对于由若干个感知机所构成的神经网络而言，所有权重的变化则变为了
+$\frac{\partial E_k}{\partial w_{hj}}$。
+
+那么对于多层的神经网络，式 5.4 仅表现出了最后一层隐层与输出层的权重变化，那么就有了疑问：其它层之间的权重好像并不会被式 5.6 所改变？
+接下来继续，注意到 $w_hj$ 先影响到第 $j$ 个输出层神经元的输入值 $\beta_j$。根据图示其为隐层所有神经元与其本身的表达式，即
+\[ \beta_j = \sum_{h=1}^{q} w_{hj} b_h \]
+接着 $w_{hj}$ 再影响到其他输出值 $\hat{y}_j^k$，最后再影响到 $E_k$，那么根据求导的链式法则有：
+\begin{equation}
+  \frac{\partial E_k}{\partial w_{hj}} =
+  \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+  \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot
+  \frac{\partial \beta_j}{\partial w_{hj}}
+\end{equation}
+
+根据 $\beta_j$ 的定义，有：
+\begin{equation}
+  \begin{split}
+    \frac{\partial \beta_j}{\partial w_{hj}} & = \frac{\partial (\sum_{h=1}^{q} w_{hj} b_h) }{\partial w_{hj}} \\
+    & = \frac{\partial (w_{1j}b_1 + w_{2j}b_2 + \cdots + w_{hj}b_h + \cdots + w_{qj}b_q)}{\partial w_{hj}} \\
+    & = 0 + 0 + \cdots + b_h + \cdots + 0 \\
+    & = b_h
+  \end{split}
+\end{equation}
+
+而又根据 Sigmoid 函数的一个很好的性质：
+\begin{equation}
+  f'(x) = f(x)(1 - f(x))
+\end{equation}
+
+根据式 5.4 与式 5.3 有：
+\begin{equation}
+  \begin{split}
+    g_j & = -\frac{\partial E_k}{\partial \hat{y}_j^k} \cdot \frac{\partial \hat{y}_j^k}{\partial \beta_j} \\
+    & = -(\hat{y}_j^k - y_j^k)f'(\beta_j - \theta_j) \\
+    & = \hat{y}_j^k (1 - \hat{y}_j^k)(y_j^k - \hat{y}_j^k)
+  \end{split}
+\end{equation}
+
+将式 5.10 与式 5.8 代入式 5.7，再代入式 5.6，就得到了 BP 算法中关于 $w_{hj}$ 的更新公式：
+\begin{equation}
+  \begin{split}
+    \Delta w_{hj} & = -\eta \frac{\partial E_k}{\partial w_{hj}} \\
+    & = -\eta \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot
+    \frac{\partial \beta_j}{\partial w_{hj}} \\
+    & = \eta \hat{y}_j^k (1 - \hat{y}_j^k)(y_j^k - \hat{y}_j^k) \cdot b_h \\
+    & = \eta g_j b_h
+  \end{split}
+\end{equation}
+
+类似可得：
+\begin{equation}
+  \Delta \theta_j = -\eta g_j
+\end{equation}
+\begin{equation}
+  \Delta v_{ih} = \eta e_h x_i
+\end{equation}
+\begin{equation}
+  \Delta \gamma_h = -\eta e_h
+\end{equation}
+
+% TODO
+
+\subsection{全局最小与局部最小}
+
+WIP
 
 \end{document}
