@@ -4,6 +4,7 @@
 % @brief:
 
 \PassOptionsToPackage{quiet}{fontspec}
+\PassOptionsToPackage{dvipsnames}{xcolor}
 \documentclass[UTF8]{ctexart}
 
 \usepackage[a4paper, total={6in, 8in}]{geometry}
@@ -13,10 +14,13 @@
 \usepackage{amsmath}
 \usepackage{tikz}
 \usetikzlibrary{positioning}
-\usepackage{xcolor}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{framed}
+\colorlet{shadecolor}{cyan!20}
+% \usepackage[dvipsnames]{xcolor}
 \usepackage{graphicx}
 \graphicspath{\subfix{./images/}}
-\usepackage{listings}
 \usepackage{enumerate}
 \usepackage{hyperref}
 \usepackage[most]{tcolorbox}
