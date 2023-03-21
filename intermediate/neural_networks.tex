@@ -174,7 +174,8 @@
         备注：这里随机的意义在于每次调整的权重 $w$ 不会对某个/些样本点产生依赖，即常说的“过拟合”。
 \end{enumerate}
 
-补充：
+\bigbreak
+\textbf{补充}
 
 \begin{enumerate}[I]
   \item \textbf{梯度下降法（gradient descent）}是一种一阶（first-order）优化方法，其被用于求解无约束优化问题。
@@ -461,8 +462,6 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
   \Delta \gamma_h = -\eta e_h
 \end{equation}
 
-% TODO
-
 式 5.13 与 5.14 中
 
 \begin{equation}
@@ -473,6 +472,112 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
     & = b_h (1 - b_h) \sum_{j=1}^{l} w_{hj} g_j
   \end{split}
 \end{equation}
+
+\bigbreak
+\textbf{式 5.12 解析}
+
+因为：
+
+\[
+  \Delta \theta_j = -\eta \frac{\partial E_k}{\partial \theta_j}
+\]
+
+同时有：
+
+\begin{align*}
+  \begin{split}
+    \frac{\partial E_k}{\partial \theta_j} & = \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \theta_j} \\
+    & = \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial [f(\beta_j - \theta_j)]}{\partial \theta_j} \\
+    & = \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    f'(\beta_j - \theta_j) \times (-1) \\
+    & = \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    f(\beta_j - \theta_j) \times [1 - f(\beta_j - \theta_j)] \times (-1) \\
+    & = \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \hat{y}_j^k (1 - \hat{y}_j^k) \times (-1) \\
+    & = \frac{\partial [\frac{1}{2} \sum_{j=1}^{l} (\hat{y}_j^k - y_j^k)^2]}{\partial \hat{y}_j^k} \cdot
+    \hat{y}_j^k (1 - \hat{y}_j^k) \times (-1) \\
+    & = \frac{1}{2} \times 2(\hat{y}_j^k - y_j^k) \times 1 \cdot \hat{y}_j^k (1 - \hat{y}_j^k) \times (-1) \\
+    & = (\hat{y}_j^k - y_j^k) \hat{y}_j^k (1 - \hat{y}_j^k) \\
+    & = g_j
+  \end{split}
+\end{align*}
+
+所以：
+
+\[
+  \Delta \theta_j = -\eta g_j = -\eta \frac{\partial E_k}{\partial \theta_j}
+\]
+
+\textbf{式 5.13 解析}
+
+因为：
+
+\[
+  \Delta v_{ih} = -\eta \frac{\partial E_k}{\partial v_{ih}}
+\]
+
+同时有：
+
+\begin{align*}
+  \begin{split}
+    \frac{\partial E_k}{\partial v_{ih}} & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot \frac{\partial \beta_j}{\partial b_h} \cdot
+    \frac{\partial b_h}{\partial \alpha_h} \cdot \frac{\partial \alpha_h}{\partial v_ih} \\
+    & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot \frac{\partial \beta_j}{\partial b_h} \cdot
+    \frac{\partial b_h}{\partial \alpha_h} \cdot x_i \\
+    & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot \frac{\partial \beta_j}{\partial b_h} \cdot
+    f'(\alpha_h - \gamma_h) \cdot x_i \\
+    & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot w_{hj} \cdot f'(\alpha_h - \gamma_h) \cdot x_i \\
+    & = \sum_{j=1}^{l} (-g_j) \cdot w_{hj} \cdot f'(\alpha_h - \gamma_h) \cdot x_i \\
+    & = - f'(\alpha_h - \gamma_h) \cdot \sum_{j=1}^{l} (g_j) \cdot w_{hj} \cdot x_i \\
+    & = - b_h (1 - b_h) \cdot \sum_{j=1}^{l} (g_j) \cdot w_{hj} \cdot x_i \\
+    & = - e_h \cdot x_i
+  \end{split}
+\end{align*}
+
+所以：
+
+\[
+  \Delta v_{ih} = -\eta \frac{\partial E_k}{\partial v_{ih}} = \eta e_h x_i
+\]
+
+\textbf{式 5.14 解析}
+
+因为：
+
+\[
+  \Delta \gamma_h = -\eta \frac{\partial E_k}{\partial \gamma_h}
+\]
+
+同时有：
+
+\begin{align*}
+  \begin{split}
+    \frac{\partial E_k}{\partial \gamma_h} & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot \frac{\partial \beta_j}{\partial b_h} \cdot
+    \frac{\partial b_h}{\partial \gamma_h} \\
+    & = \sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot \frac{\partial \beta_j}{\partial b_h} \cdot
+    f'(\alpha_h - \gamma_h) \cdot (-1) \\
+    & = -\sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot w_{hj} \cdot f'(\alpha_h - \gamma_h) \\
+    & = -\sum_{j=1}^{l} \frac{\partial E_k}{\partial \hat{y}_j^k} \cdot
+    \frac{\partial \hat{y}_j^k}{\partial \beta_j} \cdot w_{hj} \cdot b_h (1 - b_h) \\
+    & = \sum_{j=1}^{l} g_j \cdot w_{hj} \cdot b_h (1 - b_h) \\
+    & = e_h
+  \end{split}
+\end{align*}
+
+所以：
+
+\[
+  \Delta \gamma_h = -\eta \frac{\partial E_k}{\partial \gamma_h} = -\eta e_h
+\]
 
 \newpage
 以下为 BP 算法的工作流程：
@@ -528,6 +633,7 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
 如果类似推导出基于累积误差最小化的更新规则，那么就得到了\textbf{累积误差逆传播（accumulated error backpropagation）}
 算法。
 
+\bigbreak
 那么来比较一下两种算法的差异：
 
 \begin{center}
@@ -543,16 +649,19 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
     \hline
     迭代次数 & 多                        & 少                      \\
     \hline
+    类比   & 随机梯度下降                   & 标准梯度下降                 \\
+    \hline
   \end{tabular}
 \end{center}
 
+注：随机梯度下降（stochastic gradient descent）
 在训练集非常大时，累积误差下降到一定程度后，进一步下降会非常缓慢，这时切换为标准 BP 可以更快获得较好的解。
 
 两种策略来缓解 BP 网络的过拟合：
 \begin{enumerate}
-  \item 早停（early stopping）：将数据分成训练集和验证集，训练集用来计算梯度、更新连接权和阈值，验证集用来估计误差，
+  \item \textbf{早停（early stopping）}：将数据分成训练集和验证集，训练集用来计算梯度、更新连接权和阈值，验证集用来估计误差，
         若训练集误差降低但验证集误差升高，则停止训练，同时返回具有最小验证集误差的连接权和阈值。
-  \item 正则化（regularization）：在误差目标函数中增加一个用于描述网络复杂度的部分，例如连接权与阈值的平方和。
+  \item \textbf{正则化（regularization）}：在误差目标函数中增加一个用于描述网络复杂度的部分，例如连接权与阈值的平方和。
         仍然令 $E_k$ 表示第 $k$ 个训练样例上的误差，$w_i$ 表示连接权和阈值，则误差目标函数 5.16 变为
         \begin{equation}
           E = \lambda \frac{1}{m} \sum_{k=1}^{m} E_k + (1-\lambda) \sum_{i} w_i^2
@@ -560,6 +669,27 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
         其中 $\lambda \in (0,1)$ 用于对经验误差与网络复杂度这两项进行折中，通常会使用交叉验证法来估计。
 \end{enumerate}
 
+注：引入正则化策略的神经网络与第 6 章的 SVM 非常相似。
+
+\newpage
+\textbf{补充}
+
+BP 算法的计算流程。
+
+\begin{itemize}
+  \item $x$ 输入，即特征向量；
+  \item $y$ 目标输出。对于分类问题而言，输出是一个类型概率的向量（例 $(0.1, 0.7, 0.2)$），而目标输出是某个特定的类型，
+        由 one-hot/dummy variable 编码（例 $(0, 1, 0)$）；
+  \item $C$ 损失函数或代价函数。对于分类问题而言，这通常是交叉熵 cross entropy（XC），而对回归问题而言则是平方错误损失
+        squared error loss（SEL）；
+  \item $L$ 神经网络的层数；
+  \item $W^l = （w_{jk}^l$ 神经网络中 $l-1$ 层与 $l$ 层之间的权重，而 $w_{jk}^l$ 则是在 $l-1$ 层的第 $k$ 个节点
+        与 $l$ 层第 $j$ 个节点之间的权重；
+  \item $f^l$ 神经网络中 $l$ 层的激活函数。对于分类问题，二元分类的最后一层通常是对数函数，多种类分类则是 softmax 函数，
+        而传统做法中，隐层的节点通常是 sigmoid 函数，今天更多样化了，线性整流函数 rectified 更为普遍（ramp，ReLU）。
+\end{itemize}
+
+% TODO
 
 \newpage
 \subsection{全局最小与局部最小}
