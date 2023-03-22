@@ -71,8 +71,6 @@
 
 其中 $\eta \in (0,1)$ 称为学习率（learning rate）。公式 5.2 为感知机学习算法中的参数更新式。
 
-\newpage
-
 \begin{enumerate}[I]
   \item \textbf{感知机模型}
 
@@ -193,6 +191,7 @@
           \Delta \pmb{x} = -\gamma \nabla f(\pmb{x})
         \end{equation*}
         其中步长 $\gamma$ 为一个小常数。这就是梯度下降法。
+        \bigbreak
 
   \item Sigmoid 函数作为上述的连续可微函数（激活函数）
         \begin{center}
@@ -255,9 +254,9 @@
 
 \newpage
 
-\subsection{误差逆传播算法}
+\subsection{误差反向传播算法}
 
-误差逆传播算法（error BackPropagation，简称 BP）。
+误差反向传播算法（error BackPropagation，简称 BP）。
 
 给定训练集 $D = \{(\pmb{x}_1, \pmb{y}_1), (\pmb{x}_2, \pmb{y}_2),\dots,(\pmb{x}_m, \pmb{y}_m)\},\,
   \pmb{x}_i \in \mathbb{R}^d,\, \pmb{y}_i \in \mathbb{R}^l$，即 input 为 $d$ 维，output $l$ 维。如图：
@@ -580,7 +579,7 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
 \]
 
 \newpage
-以下为 BP 算法的工作流程：
+\textbf{BP 算法的工作流程}：
 
 \begin{shaded}
   \textbf{输入}：
@@ -630,7 +629,7 @@ $\frac{\partial E_k}{\partial w_{hj}}$。
 \end{equation}
 
 但是上面介绍的“标准BP算法”每次仅针对一个训练样例更新连接权和阈值，意味着上述工作流程中的更新规则是基于单个 $E_k$ 推导而得。
-如果类似推导出基于累积误差最小化的更新规则，那么就得到了\textbf{累积误差逆传播（accumulated error backpropagation）}
+如果类似推导出基于累积误差最小化的更新规则，那么就得到了\textbf{累积误差反向传播（accumulated error backpropagation）}
 算法。
 
 \bigbreak
@@ -689,7 +688,100 @@ BP 算法的计算流程。
         而传统做法中，隐层的节点通常是 sigmoid 函数，今天更多样化了，线性整流函数 rectified 更为普遍（ramp，ReLU）。
 \end{itemize}
 
-% TODO
+整个网络实际上是一个关于\textbf{函数组合 function composition} 与\textbf{矩阵乘法 matrix multiplication} 的结合：
+
+\[
+  g(x) := f^L (W^L f^{L-1}(W^{L-1} \cdots f^1(W^1x) \cdots))
+\]
+
+对于训练集而言，输入-输出对 $\{(x_i, y_i)\}$ 视为一个集；而模型在每个输入-输出对 $(x_i, y_i)$ 的损失实际上是预测值 $g(x_i)$
+与目标输出 $y_i$ 的差异：
+\[ C(y_i, g(x_i)) \]
+
+注意这里的差异：在模型评估时，权重是固定的，而输入是变化的（且目标输出可能是不可知的），此时神经网络结束于输出层（它并不包含损失函数）；
+而在模型训练时，输入-输出对是固定的，而权重是变化的，此时神经网络结束于损失函数。
+
+反向传递计算出固定的输入-输出对 $(x_i, y_i)$ 的梯度，其中权重 $w_{jk}^l$ 是可变的。每个独立的梯度 $\partial C/\partial w_{jk}^l$
+可以被链式计算；而分开计算每个权重是低效的。反向传递通过避免重复计算以及不去计算非必要的中间值，从而可以高效的计算出梯度，即计算每层的
+梯度 -- 具体而言，是从后向前的，每层加权输入的梯度，以 $\delta^l$ 表示。
+
+这里的关键点在于，在 $W^l$ 中的权重影响损失是通过它在下一层的作用，又因为整个过程是线性的，$\delta^l$ 是唯一一个在 $l$ 层中
+需要计算的数据，有此可以计算上一层 $\delta^{l-1}$ 并递归下去。这样就在两个层面避免了低效：首先，它避免了重复，因为当计算 $l$ 层
+的梯度时，不需要每次都重新计算之后所有 $l+1, l+2$ 层的导数；其次，它避免了非必要的中间计算，因为每个阶段它直接计算了最终输出（损失）
+权重的梯度，而不是不必要的计算隐层中关于权重变化 $\partial a_{j'}^{l'} / \partial w_{jk}^l$ 数值的导数。
+
+
+\begin{enumerate}[I]
+  \item \textbf{矩阵乘法}
+
+        给定一个输入-输出对 $(x,y)$，其损失为：
+        \[ C(y, f^L(W^L f^{L-1}(W^{L-1} \cdots f^2(W^2 f^1(W^1 x)) \cdots))) \]
+
+        计算损失首先从输入 $x$ 开始并前向进行；将每个隐层的加权输入表示为 $z^l$，同时将隐层 $l$ 的输出记为激活 $a^l$。
+        对于反向传播，激活 $a^l$ 以及导数 $(f^l)'$（在 $z^l$ 计算）必须被缓存。
+
+        关于输入的损失导数由链式法则给出；注意每一项都是\href{https://en.wikipedia.org/wiki/Total_derivative}{\textbf{全微分}}，
+        计算在神经网络（每个节点）的值：
+        \[
+          \frac{dC}{da^L} \circ \frac{da^L}{dz^L} \cdot \frac{dz^L}{da^{L-1}} \circ \frac{da^{L-1}}{dz^{L-1}}
+          \cdot \frac{dz^{L-1}}{da^{L-2}} \circ \cdots \circ \frac{da^1}{dz^1} \cdot
+          \frac{\partial z^1}{\partial x}
+        \]
+
+        \begin{itemize}
+          \item [\textit{注1}]
+                函数 $f$ 在某一点的全微分是指该函数在该点附近关于其自变量的最佳线性近似；与偏微分不同，
+                全微分反映了函数关于其所有自变量的线性近似，而非单个自变量。
+                \[ f(x) = \int_0^x f'(t) dt \]
+          \item [\textit{注2}]
+                对于组合函数 $g \circ f$ 在 $a$ 的全微分，满足链式法则：
+                \[ d(g \circ f)_a = dg_{f(a)} \cdot df_a \]
+          \item [\textit{注3}]
+                这里的 $\circ$ 为 \href{https://en.wikipedia.org/wiki/Hadamard_product_(matrices)}{Hadamard product}，
+                即元素一一相乘。
+        \end{itemize}
+
+        这些项分别为：损失函数的导数；激活函数的导数；以及矩阵的权重：
+        \[
+          \frac{dC}{da^L} \circ (f^L)' \cdot W^L \circ (f^{L-1}) \circ \cdots \circ (f^l)' \cdot W^l
+        \]
+
+        梯度 $\nabla$ 是输出（由输入表示的）的导数转置，因此矩阵式转置的，且乘法的顺序是相反的，但是入口是一致的：
+        \[
+          \nabla_x C = (W^{-1}) \cdot (f^1)' \circ \cdots \circ (W^{L-1})^T \cdot (f^{L-1})' \circ (W^L)^T
+          \cdot (f^L)' \circ \nabla_{a^L} C
+        \]
+
+        反向传播则是该表达式，从右向左计算所构成的（相当于从左到右乘上前一个表达式的导数），有此计算每一次的梯度；另外还有额外的一步加法，
+        这是因为权重的梯度不仅仅是一个子表达式：还有一步额外的乘法。
+
+        对于部分乘积（从右至左）的辅助值 $\delta^l$，表述为“$l$ 层的错误”，且定义 $l$ 层输入值的梯度：
+        \[
+          \delta^l := (f^l)' \circ (W^{l+1})^T \circ \cdots \circ (W^{L-1})^T \cdot (f^{L-1})' \circ (W^L)^T
+          \cdot (f^L)' \circ \nabla_{a^L} C
+        \]
+
+        注意 $\delta^l$ 是一个向量，其长度是 $l$ 层神经元的数量；每部分都被表述为“该节点的损失属性”
+
+        那么 $l$ 层权重的梯度则为：
+        \[ \nabla_{W^l} C = \delta^l (a^{l-1})^T \]
+
+        这里的 $a^{l-1}$ 是因为在 $l-1$ 与 $l$ 层直接的权重 $W^l$ 按比例影响 $l$ 层的输入（激活）：输入是固定的，权重是可变的。
+
+        那么 $\delta$ 就可以很容易的递归计算出来，从右至左：
+        \[ \delta^{l-1} := (f^{l-1})' \circ (W^l)^T \cdot \delta^l \]
+
+        那么权重的梯度可以通过每层的矩阵乘法而计算出来；这便是反向传播。
+
+  \item \textbf{导数}
+
+        WIP
+
+  \item \textbf{损失函数}
+
+        WIP
+
+\end{enumerate}
 
 \newpage
 \subsection{全局最小与局部最小}
