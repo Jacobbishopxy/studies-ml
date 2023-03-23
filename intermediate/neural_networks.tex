@@ -774,12 +774,134 @@ BP 算法的计算流程。
         那么权重的梯度可以通过每层的矩阵乘法而计算出来；这便是反向传播。
 
   \item \textbf{导数}
+        注：以下资料以另一个角度来解读式 5.11。
 
-        WIP
+        梯度下降方法牵涉到计算损失函数相对于网络权重的导数。这通常是通过反向传播算法完成的。假设一个输出神经元，有方差函数
+        \[ E = L(t, y) \]
+        其中
+        \begin{itemize}
+          \item $L$ 是输出 $y$ 与目标值 $t$ 的损失；
+          \item $t$ 是训练样本的目标输出；
+          \item $y$ 是输出神经元的实际输出。
+        \end{itemize}
+
+        对于每个神经元 $j$，其输出 $O_j$ 被定义为
+        \[ o_j = \varphi(\mathrm{net}_j) = \varphi \Biggl(\sum_{k=1}^{n} w_{kj} x_k\Biggr) \]
+        其中激活函数 $\varphi$ 是非线性的，同时在激活区域是可微的（ReLU 在一个点上不可微）。经典的激活函数是对数函数：
+        \[ \varphi = \frac{1}{1 + e^{-x}} \]
+        其可以方便的进行求导：
+        \[ \frac{d \varphi(z)}{dz} = \varphi(z)(1 - \varphi(z)) \]
+
+        这里一个神经元的输入 $\mathrm{net}_j$ 是前一层神经元们输出 $o_k$ 加权之和。如果神经元在神经网络输入层之后的第一层，
+        那么输入层的 $o_k$ 即为神经网络的输入 $x_k$。神经元的输入单元数量是 $n$。变量 $w_{kj}$ 表示前一层中神经元 $k$ 与
+        当前层神经元 $j$ 之间的权重。
+
+        \textbf{求误差的导数}
+
+        计算误差相对于权重 $w_{ij}$ 的偏微分是通过两次链式法则：
+        \begin{equation}
+          \frac{\partial E}{\partial w_{ij}} = \frac{\partial E}{\partial o_j} =
+          \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial\mathrm{net}_j}
+          \frac{\partial \mathrm{net}_j}{\partial w_{ij}}
+          \tag{I}
+        \end{equation}
+        上述表达式右侧的最后一个元素，仅有一项在 $\mathrm{net}_j$ 之和中依赖 $w_{ij}$，因此有
+        \begin{equation}
+          \frac{\partial E}{\partial w_{ij}} = \frac{\partial}{\partial w_{ij}}
+          \Biggl(\sum_{k=1}^{n} w_{ki} o_k\Biggr) = \frac{\partial}{\partial w_{ij}} w_{ij} o_i = o_i
+          \tag{II}
+        \end{equation}
+
+        如果神经元在输出层之后的一层，那么 $o_i$ 就是 $x_i$。
+
+        神经元 $j$ 的输出相对于其输入的倒数就是一个简单的激活函数导数：
+        \begin{equation}
+          \frac{\partial o_j}{\partial\mathrm{net}_j}=\frac{\varphi(\mathrm{net}_j)}{\partial\mathrm{net}_j}
+          \tag{III}
+        \end{equation}
+
+        而对于对数激活函数而言有
+        \[
+          \frac{\partial o_j}{\partial\mathrm{net}_j}=\frac{\partial}{\partial\mathrm{net}_j}\varphi(\mathrm{net}_j)=
+          \varphi(\mathrm{net}_j)(1-\varphi(\mathrm{net}_j))=o_j(1-o_j)
+        \]
+        这也是为什么反向传播需要激活函数是可微的。（尽管如此，ReLU 激活函数，在 0 处并不可微，如今更加普遍，例如在 AlexNet 中）。
+        注：\href{https://en.wikipedia.org/wiki/AlexNet}{AlexNet}，即 CNN 架构，卷积神经网络。
+
+        如果神经元位于输出层，那么计算很简单，因为 $o_j = y$：
+        \begin{equation}
+          \frac{\partial E}{\partial o_j} = \frac{\partial E}{\partial y}
+          \tag{IV}
+        \end{equation}
+        如果平方差用作于损失函数，那么可以重写为
+        \[
+          \frac{\partial E}{\partial o_j} = \frac{\partial E}{\partial y} =
+          \frac{\partial}{\partial y} \frac{1}{2} (1-y)^2 = y - t
+        \]
+
+        然而，如果 $j$ 是神经网络中隐层中的神经元，那么寻找 $E$ 相对于 $o_j$ 的导数就没那么明显了。
+        将 $E$ 视为一个由神经元 $j$ 的得到的输入为全部神经元 $L = \{u,v,\dots,w\}$ 的函数：
+        \[
+          \frac{\partial E(o_j)}{\partial o_j} =
+          \frac{\partial E(\mathrm{net}_u,\mathrm{net}_v,\dots,\mathrm{net}_w)}{\partial o_j}
+        \]
+        求相对于 $o_j$ 的全微分，那么就得到了一个导数的递归表达式：
+        \begin{equation}
+          \frac{\partial E}{\partial o_j} =
+          \sum_{t \in L}\Biggl(\frac{\partial E}{\partial\mathrm{net}_t}\frac{\partial\mathrm{net}_t}{\partial o_j}\Biggr)=
+          \sum_{t \in L}
+          \Biggl(
+          \frac{\partial E}{\partial o_t}\frac{\partial o_t}{\partial\mathrm{net}_t}\frac{\partial\mathrm{net}_t}{\partial o_j}
+          \Biggr)=
+          \sum_{t \in L}\Biggl(\frac{\partial E}{\partial o_t}\frac{\partial o_t}{\partial\mathrm{net}_t}w_{jl}\Biggr)
+          \tag{V}
+        \end{equation}
+
+        因此，当相对下一层的输出 $o_l$ 全部可微时，那么相对于 $o_j$ 的微分则可被计算。[注意，如果 $L$ 中任何神经元没有连接至神经元 $j$，它们则会
+        独立于 $w_{ij}$，同时与和相关的偏微分则会消失为 0]。
+
+        将 (II)，(III)，(IV)，(V) 代入进 (I) 中，获得：
+        \begin{align*}
+          \begin{split}
+            \frac{\partial E}{\partial w_{ij}} & = \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial\mathrm{net}_j}
+            \frac{\partial\mathrm{net}_j}{\partial w_{ij}} \\
+            & = \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial\mathrm{net}_j} o_i \\
+            & = o_i \delta_j
+          \end{split}
+        \end{align*}
+        这其中
+        \[
+          \delta_j = \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial\mathrm{net}_j} =
+          \begin{cases}
+            \frac{\partial L(o_j,t)}{\partial o_j}      \frac{d\varphi(\mathrm{net}_j)}{d\mathrm{net}_j} & \text{如果 $j$ 是一个输出层的神经元，} \\
+            (\sum_{l \in L} w_{jl} \delta_j) \frac{d\varphi(\mathrm{net}_j)}{d\mathrm{net}_j}            & \text{如果 $j$ 是一个隐层的神经元。}
+          \end{cases}
+        \]
+        如果 $\varphi$ 是一个对数函数，那么误差则为平方差：
+        \[
+          \delta_j = \frac{\partial E}{\partial o_j} \frac{\partial o_j}{\partial\mathrm{net}_j} =
+          \begin{cases}
+            (o_j - t_j) o_j (1 - o_j)                      & \text{如果 $j$ 是一个输出层的神经元} \\
+            (\sum_{l \in L} w_{jl} \delta_j) o_j (1 - o_j) & \text{如果 $j$ 是一个隐层的神经元}
+          \end{cases}
+        \]
+
+        通过梯度下降法来更新权重 $w_{ij}$，那么就必须选择一个学习率，$\eta > 0$。根据 $w_{ij}$ 的增减，权重的变化必须反应在 $E$ 上。
+        如果 $\frac{\partial E}{\partial w_{ij}} > 0$，那么 $w_{ij}$ 增加则 $E$ 增加；相反的，如果 $\frac{\partial E}{\partial w_{ij}} < 0$，
+        那么 $w_{ij}$ 增加则 $E$ 减少。新的 $\Delta w_{ij}$ 被添加到就权重上，且学习率与梯度之积再乘上 $-1$ 则能保证 $w_{ij}$ 的变化总是能减少 $E$。
+        换言之，下述等式 $-\eta \frac{\partial E}{\partial w_{ij}}$ 总是能在 $w_{ij}$ 改变时令 $E$ 减少：
+        \[
+          \Delta w_{ij} = -\eta \frac{\partial E}{\partial w_{ij}} = -\eta o_i \delta_j
+        \]
 
   \item \textbf{损失函数}
 
-        WIP
+        损失函数是一个函数，它将一个或多个变量的值映射到一个实数上，直观地表示与这些值相关的一些“成本”。对于反向传播而言，在一个训练样本通过正向传播后，
+        损失函数的计算了神经网络输出与期望输出之间的差异。
+
+        损失函数的数学表达式必须满足两个条件，才有可能用于反向传播。首先，对于 $n$ 个独立的训练模型 $x$，可以被写成一个由误差函数 $E_x$ 所构成的均值
+        $E = \frac{1}{n} \sum_x E_x$。该假设的原因是，对于单个训练样本，反向传播算法需要计算误差函数的梯度，再被泛化到整个误差函数；其次，它可以
+        写成神经网络输出的函数。
 
 \end{enumerate}
 
