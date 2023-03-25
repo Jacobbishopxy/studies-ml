@@ -129,6 +129,8 @@ torch::Tensor make_grid(
   return grid;
 }
 
+} // namespace
+
 // 将一个 tensor 保存至图像文件
 //
 // 由 python 代码转换并进行改动
@@ -243,5 +245,4 @@ torch::Tensor load_image(
   );
 }
 
-} // namespace
 } // namespace image_io

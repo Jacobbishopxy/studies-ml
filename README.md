@@ -65,6 +65,8 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 
 1. Intermediate
 
+    - convolutional neural network: [cpp](./intermediate/convolutional_neural_network/convolutional_neural_network.cpp) & [py](./intermediate/convolutional_neural_network/convolutional_neural_network.py)
+
 1. Advanced
 
 1. Interactive
