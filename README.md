@@ -68,3 +68,11 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 1. Advanced
 
 1. Interactive
+
+## Project Structure
+
+### CMake deps
+
+- extern
+
+- utils

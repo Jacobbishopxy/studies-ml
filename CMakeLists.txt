@@ -13,7 +13,7 @@ find_package(Torch QUIET PATHS "${CMAKE_SOURCE_DIR}/libtorch")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 # datasets download
-option(DOWNLOAD_DATASETS "Automatically download required datasets at build-time." OFF)
+option(DOWNLOAD_DATASETS "Automatically download required datasets at build-time." ON)
 add_definitions(-D_DATASETS_PATH=\"${CMAKE_SOURCE_DIR}/data\")
 
 if(DOWNLOAD_DATASETS)
@@ -41,4 +41,7 @@ add_subdirectory(./intermediate im)
 add_subdirectory(./advanced ad)
 add_subdirectory(./interactive ia)
 
+# external deps
+add_subdirectory("extern")
+# utils
 add_subdirectory("utils/image_io")
