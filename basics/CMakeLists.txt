@@ -8,6 +8,7 @@ target_link_libraries(linear_regression "${TORCH_LIBRARIES}")
 
 add_executable(logistic_regression logistic_regression.cpp)
 target_link_libraries(logistic_regression "${TORCH_LIBRARIES}")
+
 if(DOWNLOAD_DATASETS)
     add_dependencies(logistic_regression mnist)
 endif()
@@ -20,6 +21,7 @@ target_sources(
     feed_forward_neural_network.cpp
 )
 target_link_libraries(feed_forward_neural_network "${TORCH_LIBRARIES}")
+
 if(DOWNLOAD_DATASETS)
-    add_dependencies(logistic_regression mnist)
+    add_dependencies(feed_forward_neural_network mnist)
 endif()

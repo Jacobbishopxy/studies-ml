@@ -23,19 +23,9 @@
 
 *Note:* For Mac M1 user, besides following the steps above, we'll have several extra steps to be done. Check [this](./mac_m1_build.md).
 
-## Study materials
-
-1. WatermelonBook [ch-CN]: <https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/MLbook2016.htm>
-
-1. PumpkinBook [ch-CN]: <https://github.com/datawhalechina/pumpkin-book>
-
-1. PyTorch: <https://pytorch.org/>
-
-1. [PyTorch Cpp](https://github.com/prabhuomkar/pytorch-cpp) and [PyTorch Py](https://github.com/yunjey/pytorch-tutorial)
-
 ## Contents
 
-Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
+Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 
 1. LaTeX: [Main entry](./studies-ml.tex) & [PDF](./out/studies-ml.pdf)
 
@@ -78,3 +68,13 @@ Note: some of the comments and `.tex` files are written in Chinese [ch-CN].
 - extern
 
 - utils
+
+## References
+
+1. WatermelonBook [ch-CN]: <https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/MLbook2016.htm>
+
+1. PumpkinBook [ch-CN]: <https://github.com/datawhalechina/pumpkin-book>
+
+1. PyTorch: <https://pytorch.org/>
+
+1. [PyTorch Cpp](https://github.com/prabhuomkar/pytorch-cpp) and [PyTorch Py](https://github.com/yunjey/pytorch-tutorial)
