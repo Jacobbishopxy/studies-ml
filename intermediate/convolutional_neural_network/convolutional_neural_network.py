@@ -13,7 +13,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 
-data_path = "../data/mnist"
+data_path = "../../data/"
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
