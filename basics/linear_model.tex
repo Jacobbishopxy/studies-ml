@@ -1,11 +1,174 @@
 % @file:		linear_model.tex
 % @author:	Jacob Xie
-% @date:		2023/03/18 11:57:00 Saturday
+% @date:		2023/03/30 23:55:31 Thursday
 % @brief:
 
 
 \documentclass[../studies-ml.tex]{subfiles}
 
 \begin{document}
+
+\subsection{基础}
+
+\textbf{线性模型（linear model）}：
+\begin{equation}
+  f(\pmb{x}) = w_1x_1 + w_2x_2 + \dots + w_d x_d + b
+\end{equation}
+其中 $\pmb{x} = (x_1;x_2;\dots;x_d)$，$d$ 为属性数量。其向量形式：
+\begin{equation}
+  f(\pmb{x}) = \pmb{w}^T\pmb{x} + b
+\end{equation}
+其中 $\pmb{w} = (w_1;w_2;\dots;w_d)$。
+
+非线性模型（nonlinear model）
+
+可解释性（comprehensibility）
+
+\subsection{线性回归}
+
+给定数据集 $D = \{(\pmb{x}_1,y_1), (\pmb{x}_2,y_2),\dots,(\pmb{x}_m,y_m)\}, \pmb{x}_i = (x_{i1;x_{i2};\dots;x_{id}}), y_i \in \mathbb{R}$。
+\textbf{线性回归（linear regression）}试图学得一个线性模型用以预测实值输出标记，即：
+\begin{equation}
+  f(x_i) = wx_i + b,\ \text{使得}\ f(x_i) \simeq y_i
+\end{equation}
+
+根据均方误差(2.2)最小化的原则，确定 $w$ 与 $b$：
+\begin{equation}
+  \begin{split}
+    (w^*, b^*) & = \argmin_{(w,b)} \sum_{i=1}^{m} (f(x_i) - y_i)^2 \\
+    & = \argmin_{(w,b)} \sum_{i=1}^{m} (y_i - wx_i - b)^2
+  \end{split}
+\end{equation}
+
+均方误差的集合意义对应了常用的欧几里得距离，即欧式距离（Euclidean distance），而基于均方误差最小化来进行模型求解的方法称为
+最小二乘法（least squared method）。因此在线性回归中，最小二乘法就是试图找到一条直线，使所有样本到直线上的欧式距离之和最小。
+
+求解 $w$ 和 $b$ 使 $E_{(w,b)} = \sum_{i=1}^{m} (y_i - wx_i - b)^2$ 最小化的过程，称为线性回归模型的最小二乘“参数估计”
+（parameter estimation）。将 $E_{(w,b)}$ 分别对 $w$ 和 $b$ 求导，得
+\begin{equation}
+  \begin{split}
+    \frac{\partial E_{(w,b)}}{\partial w} & = \frac{\partial}{\partial w}(\sum_{i=1}^{m} (y_i - wx_i - b)^2)                     \\
+    & = \sum_{i=1}^{m} 2(y_i - wx_i - b)(-x_i)                                             \\
+    & = 2 \sum_{i=1}^{m} (wx_i^2 - x_i y_i + bx_i) \makebox[2em][l]{\qquad\textcircled{1}} \\
+    & = 2 \Biggl(w\sum_{i=1}^{m} x_i^2 - \sum_{i=1}^{m} (y_i - b)x_i \Biggr)
+  \end{split}
+\end{equation}
+
+\begin{equation}
+  \begin{split}
+    \frac{\partial E_{(w,b)}}{\partial b} & = \frac{\partial}{\partial b}(\sum_{i=1}^{m} (y_i - wx_i - b)^2) \\
+    & = \sum_{i=1}^{m} 2(y_i - wx_i - b)(-1) \\
+    & = 2 \sum_{i=1}^{m} (wx_i - y_i + b) \makebox[2em][l]{\qquad\textcircled{2}} \\
+    & = 2 \Biggl(mb - \sum_{i=1}^{m}(y_i - wx_i)\Biggr)
+  \end{split}
+\end{equation}
+
+令上述两式为零可得 $w$ 与 $b$ 最优解的\textbf{闭式（closed-form）}解：
+
+\begin{align*}
+  \text{let \textcircled{1} = 0,}\quad & \sum_{i=1}^{m} (wx_i^2 - x_i y_i + b_x) = 0                                                    \\
+                                       & w\sum_{i=1}^{m} x_i^2 = \sum_{i=1}^{m} (x_iy_i - bx_i) \makebox[2em][l]{\qquad\textcircled{3}}
+\end{align*}
+
+\begin{align*}
+  \text{let \textcircled{2} = 0,}\quad w\sum_{i=1}^{m} x_i^2 & = \sum_{i=1}^{m} (y_i - b)                                             \\
+                                                             & = \sum_{i=1}^{m} y_i - mb                                              \\
+  \frac{w}{m} \sum_{i=1}^{m} x_i                             & = \frac{1}{m} \sum_{i-1}^{m} y_i - b                                   \\
+  w \overline{x}                                             & = \overline{y} - b                                                     \\
+  b                                                          & = \overline{y} - w\overline{x} \makebox[2em][l]{\qquad\textcircled{4}} \\
+\end{align*}
+
+将\atxtcircle{4}代入\atxtcircle{3}中，得
+
+\begin{align*}
+  w \sum_{i=1}^{m} x_i^2                                    & = \sum_{i=1}^{m} (x_i y_i - x_i (\overline{y} - w\overline{x}))                               \\
+                                                            & = \sum_{i=1}^{m} x_i y_i - \overline{y} \sum_{i=1}^{m} x_i + w\overline{x} \sum_{i=1}^{m} x_i \\
+  w (\sum_{i=1}^{m} x_i^2 - \overline{x}\sum_{i=1}^{m} x_i) & = \sum_{i=1}^{m} (x_i y_i - \overline{y} x_i)
+\end{align*}
+
+即：
+
+\begin{equation}
+  w = \frac{\sum\limits_{i=1}^{m} y_i(x_i - \overline{x})}{\sum\limits_{i=1}^{m} x_i^2 - \frac{1}{m}\biggl(\sum\limits_{i=1}^{m}x_i\biggr)^2}
+\end{equation}
+
+而又因\atxtcircle{4}，有：
+
+\begin{equation}
+  \begin{split}
+    b & = \overline{y} - w\overline{x} \\
+    & = \frac{1}{m}\sum_{i=1}^{m} y_i - w\frac{1}{m}\sum_{i=1}^{m} x_i \\
+    & = \frac{1}{m}\sum_{i=1}^{m} (y_i - w x_i)
+  \end{split}
+\end{equation}
+
+而更普遍的场景是样本由 $d$ 个属性描述，即
+\[
+  f(\pmb{x}_i) = \pmb{w}^T \pmb{x}_i + b, \quad \text{使得}\ f(\pmb{x}_i) \simeq y_i
+\]
+也被称为\textbf{多元线性回归（multivariate linear regression）}。
+
+\begin{anote}
+  将式(3.7)进行向量化，将 $\frac{1}{m}(\sum\limits_{i=1}^{m} x_i)^2 = \overline{x}\sum\limits_{i=1}^{m} x_i$ 代入分母：
+  \begin{align*}
+    \begin{split}
+      w & = \frac{\sum_{i=1}^{m}y_i(x_i-\overline{x})}{\sum_{i=1}^{m}x_i^2 - \overline{x}\sum_{i=1}^{m}x_i} \\
+      & = \frac{\sum_{i=1}^{m}(y_i x_i- y_i \overline{x})}{\sum_{i=1}^{m}(x_i^2 - x_i \overline{x})}
+    \end{split}
+  \end{align*}
+
+  又因为
+  \begin{gather*}
+    \overline{y}\sum_{i=1}^{m}x_i = \overline{x}\sum_{i=1}^{m}y_i \tag{A} \\
+    \sum_{i=1}^{m}\overline{y}x_i = \sum_{i=1}^{m}y_i\overline{x} \tag{B} \\
+    m\overline{x}\overline{y} = \sum_{i=1}^{m}\overline{x}\overline{y} \tag{C} \\
+    (A) = (B) = (C)
+  \end{gather*}
+  且
+  \begin{gather*}
+    \sum_{i=1}^{m}x_i\overline{x} = \overline{x}\sum_{i=1}^{m}x_i =
+    \overline{x}m\frac{1}{m}\sum_{i=1}^{m}x_i = m\overline{x}^2 =
+    \sum_{i=1}^{m}\overline{x}^2
+  \end{gather*}
+  则有
+  \begin{align*}
+    \begin{split}
+      w & = \frac{\sum\limits_{i=1}^m(y_i x_i - y_i \overline{x} - x_i \overline{y} + \overline{x}\overline{y})}
+      {\sum\limits_{i=1}^m(x_i^2 - x_i\overline{x} - x_i\overline{x} + \overline{x}^2)} \\
+      & = \frac{\sum\limits_{i=1}^{m}(x_i-\overline{x})(y_i-\overline{y})}{\sum\limits_{i=1}^{m}(x_i - \overline{x})^2}
+    \end{split}
+  \end{align*}
+\end{anote}
+
+\bigbreak
+
+令 $\hat{\pmb{w}} = (\pmb{w}; b)$（即将 $b$ 作为额外一个维度的固定数 $1$，该方法用作于简化计算），同时将数据集 $D$ 表示为 $m \times (d + 1)$ 的矩阵
+$\mathbf{X}$，即：
+\begin{align*}
+  \pmb{X} =
+  \left(
+  \begin{matrix}
+      x_{11} & x_{12} & \cdots & x_{1d} & 1      \\
+      x_{11} & x_{12} & \cdots & x_{1d} & 1      \\
+      \vdots & \vdots & \ddots & \vdots & \vdots \\
+      x_{11} & x_{12} & \cdots & x_{1d} & 1
+    \end{matrix}
+  \right) =
+  \left(
+  \begin{matrix}
+      \pmb{x}_1^T & 1      \\
+      \pmb{x}_2^T & 1      \\
+      \vdots      & \vdots \\
+      \pmb{x}_m^T & 1
+    \end{matrix}
+  \right)
+\end{align*}
+
+把标记也写成向量形式 $\pmb{y} = (y_1;y_2;\dots;y_m)$，则类似于式(3.4)：
+\begin{equation}
+  \hat{\pmb{w}}^* = \argmin_{\hat{\pmb{w}}} (\pmb{y} - \mathbf{X}\hat{\pmb{w}})^T (\pmb{y} - \pmb{X}\hat{\pmb{w}})
+\end{equation}
+
+% TODO
 
 \end{document}

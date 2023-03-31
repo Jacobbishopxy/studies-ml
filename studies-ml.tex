@@ -9,6 +9,7 @@
 
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{lmodern}
+\usepackage[OT1]{fontenc}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -44,6 +45,11 @@
     enhanced,
     breakable,
     }
+
+\DeclareMathOperator*{\argmin}{\arg\min}
+\DeclareMathOperator*{\argmax}{\arg\max}
+
+\newenvironment{anote}{\begin{shaded}\textbf{Note}\par}{\end{shaded}}
 
 % ================================================================================================
 % Main

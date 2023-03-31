@@ -12,13 +12,19 @@
 }
 
 % a new command which denotes "note"
-\newcommand{\anote}{
-	\paragraph*{Note}
-}
+% \newcommand{\anote}{
+% 	\paragraph*{Note}
+% }
 
 % force indent
 \newcommand{\aidnt}[1][1]{
 	\foreach \n in {1,...,{#1}}{
 			\hspace{\parindent}
 		}
+}
+
+\newcommand*\atxtcircle[1]{%
+	\raisebox{0pt}{
+		\textcircled{\fontsize{7pt}{0}\fontfamily{phv}\selectfont #1}
+	}
 }
