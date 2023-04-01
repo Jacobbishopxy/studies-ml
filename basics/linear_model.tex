@@ -108,6 +108,8 @@
 \]
 也被称为\textbf{多元线性回归（multivariate linear regression）}。
 
+\bigbreak
+
 \begin{anote}
   将式(3.7)进行向量化，将 $\frac{1}{m}(\sum\limits_{i=1}^{m} x_i)^2 = \overline{x}\sum\limits_{i=1}^{m} x_i$ 代入分母：
   \begin{align*}
@@ -121,7 +123,7 @@
   \begin{gather*}
     \overline{y}\sum_{i=1}^{m}x_i = \overline{x}\sum_{i=1}^{m}y_i \tag{A} \\
     \sum_{i=1}^{m}\overline{y}x_i = \sum_{i=1}^{m}y_i\overline{x} \tag{B} \\
-    m\overline{x}\overline{y} = \sum_{i=1}^{m}\overline{x}\overline{y} \tag{C} \\
+    m\overline{x}\ \overline{y} = \sum_{i=1}^{m}\overline{x}\ \overline{y} \tag{C} \\
     (A) = (B) = (C)
   \end{gather*}
   且
@@ -133,11 +135,43 @@
   则有
   \begin{align*}
     \begin{split}
-      w & = \frac{\sum\limits_{i=1}^m(y_i x_i - y_i \overline{x} - x_i \overline{y} + \overline{x}\overline{y})}
+      w & = \frac{\sum\limits_{i=1}^m(y_i x_i - y_i \overline{x} - x_i \overline{y} + \overline{x}\ \overline{y})}
       {\sum\limits_{i=1}^m(x_i^2 - x_i\overline{x} - x_i\overline{x} + \overline{x}^2)} \\
       & = \frac{\sum\limits_{i=1}^{m}(x_i-\overline{x})(y_i-\overline{y})}{\sum\limits_{i=1}^{m}(x_i - \overline{x})^2}
     \end{split}
   \end{align*}
+
+  如果令 $\pmb{x} = (x_1,x_2,\cdots,x_m)^T,\ \pmb{x}_d = (x_1-\overline{x},x_2-\overline{x},\cdots,x_m-\overline{x})^T$ 为去均值后的
+  $\pmb{x}$；$\pmb{y} = (y_1,y_2,\cdots,y_m)^T,\ \pmb{y}_d = (y_1-\overline{y},y_2-\overline{y},\cdots,y_m-\overline{y})^T$
+  为去均值后的 $\pmb{y}$，代入上式可得：
+  \begin{align*}
+    \begin{split}
+      w & = \frac{\sum\limits_{i=1}^{m}(x_i-\overline{x})(y_i-\overline{y})}{\sum\limits_{i=1}^{m}(x_i - \overline{x})^2} \\
+      & = \frac{(x_1-\overline{x})(y_1-\overline{y})+(x_2-\overline{x})(y_2-\overline{y})+\cdots+(x_m-\overline{x})(y_m-\overline{y})}
+      {(x_1-\overline{x})^2+(x_2-\overline{x})^2+\cdots+(x_m-\overline{x})^2} \\
+      & = \frac{
+        \begin{bmatrix}
+          x_1 - \overline{x} & x_2 - \overline{x} & \cdots & x_m - \overline{x}
+        \end{bmatrix}
+        \cdot
+        \begin{bmatrix}
+          y_1 - \overline{y} \\ y_2 - \overline{y} \\ \vdots \\ y_m - \overline{y}
+        \end{bmatrix}
+      }{
+        \begin{bmatrix}
+          x_1 - \overline{x} & x_2 - \overline{x} & \cdots & x_m - \overline{x}
+        \end{bmatrix}
+        \cdot
+        \begin{bmatrix}
+          x_1 - \overline{x} \\ x_2 - \overline{x} \\ \vdots \\ x_m - \overline{x}
+        \end{bmatrix}
+      } \\
+      & = \frac{\pmb{x}_d^T\pmb{y}_d}{\pmb{x}_d^T\pmb{x}_d}
+    \end{split}
+  \end{align*}
+  其中分子中的 $\begin{bmatrix}x_1 - \overline{x} & x_2 - \overline{x} & \cdots & x_m - \overline{x}\end{bmatrix}$ 视为 $1 \times m$ 矩阵，
+  $\begin{bmatrix}y_1 - \overline{y} \\ y_2 - \overline{y} \\ \vdots \\ y_m - \overline{y}\end{bmatrix}$ 视为 $m \times 1$ 矩阵，
+  那么分子即为 $1 \times m$ 矩阵与 $m \times 1$ 矩阵的矩阵乘法运算；分母同理。
 \end{anote}
 
 \bigbreak
@@ -169,6 +203,78 @@ $\mathbf{X}$，即：
   \hat{\pmb{w}}^* = \argmin_{\hat{\pmb{w}}} (\pmb{y} - \mathbf{X}\hat{\pmb{w}})^T (\pmb{y} - \pmb{X}\hat{\pmb{w}})
 \end{equation}
 
-% TODO
+令 $E_{\hat{\pmb{w}}} = (\pmb{y} - \mathbf{X}\hat{\pmb{w}})^T (\pmb{y} - \pmb{X}\hat{\pmb{w}})$，展开
+
+\begin{align*}
+  E_{\hat{\pmb{w}}}=\pmb{y}^T\pmb{y}-\pmb{y}^T\pmb{X}\hat{\pmb{w}}-\hat{\pmb{w}}^T\pmb{X}^T\pmb{y}+\hat{\pmb{w}}^T\pmb{X}^T\pmb{X}\hat{\pmb{w}}
+\end{align*}
+
+对 $\hat{\pmb{w}}$ 进行求导：
+
+\begin{equation}
+  \begin{split}
+    \frac{\partial E_{\hat{\pmb{x}}}}{\partial\hat{\pmb{x}}} & =
+    \frac{\partial\pmb{y}^T\pmb{y}}{\partial\hat{\pmb{w}}} - \frac{\partial\pmb{y}^T\pmb{X}\hat{\pmb{w}}}{\partial\hat{\pmb{w}}} -
+    \frac{\partial\hat{\pmb{w}}^T\pmb{X}^T\pmb{y}}{\partial\hat{\pmb{w}}} + \frac{\partial\hat{\pmb{w}}^T\pmb{X}^T\pmb{X}\hat{\pmb{w}}}{\partial\hat{\pmb{w}}} \\
+    & = 0 - \pmb{X}^T\pmb{y} - \pmb{X}^T\pmb{y} + (\pmb{X}^T\pmb{X} + \pmb{X}^T\pmb{X})\hat{\pmb{w}} \\
+    & = 2\pmb{X}^T(\pmb{X}\hat{\pmb{w}} - \pmb{y})
+  \end{split}
+\end{equation}
+注：矩阵微分式 $\frac{\partial\pmb{a}^T\pmb{x}}{\partial\pmb{x}} = \frac{\partial\pmb{x}^T\pmb{a}}{\partial\pmb{x}} = \pmb{a}$，以及
+$\frac{\partial\pmb{x}^T\pmb{A}\pmb{x}}{\partial\pmb{x}} = (\pmb{A} + \pmb{A}^T)\pmb{x}$。
+
+\bigbreak
+
+令上式为零即可得到 $\hat{\pmb{w}}$ 最优解的闭式解。当 $\pmb{X}^T\pmb{X}$ 为\textbf{满秩矩阵（full-rank matrix）}或\textbf{正定矩阵（positive definite matrix）} 时，
+令式(3.10)为零可得
+\begin{equation}
+  \hat{\pmb{w}}^* = (\pmb{X}^T\pmb{X})^{-1}\pmb{X}^T\pmb{y}
+\end{equation}
+其中 $(\pmb{X}^T\pmb{X})^{-1}$ 是矩阵 $\pmb{X}^T\pmb{X}$ 的逆矩阵。令 $\hat{\pmb{x}}_i = (\pmb{x}_i;1)$，则最终学得的多元线性回归模型为
+\begin{equation}
+  f(\hat{\pmb{x}}_i) = \hat{\pmb{x}}_i^T (\pmb{X}^T\pmb{X})^{-1} \pmb{X}^T \pmb{y}
+\end{equation}
+
+然而，现实任务中 $\pmb{X}^T\pmb{X}$ 往往不是满秩矩阵，例如大量的变量多于样本数，即 $\pmb{X}$ 的列多于行。此时 $\hat{\pmb{x}}$ 会有多个解，它们都能使均方误差最小化，
+而选择哪个解作为输出，则由学习算法的归纳偏好决定，常见的做法是引入\textbf{正则化（regularization）项}。
+
+\bigbreak
+
+\begin{anote}
+  \textbf{Regularization} 是将结果更改为“更简单”的过程。尽管正则化过程可以被拆分成不同的方式，以下描述尤为有用：
+  \begin{itemize}
+    \item \textbf{显式正则化 explicit regularization}：显式添加一个项来优化问题，该项可以是优先级、惩罚、或者约束，将成本 cost 施加于优化函数，使得最优解唯一。
+    \item \textbf{隐式正则化 implicit regularization}：另一种方式的正则化，其包含早停、使用鲁棒损失函数、以及剔除异常值。隐式正则化普遍存在于现代机器学习的方法中，
+          包括深度学习中的随机梯度下降，以及集成学习方法（例如随机森林和梯度提升树）。
+  \end{itemize}
+\end{anote}
+
+假设示例所对应的输出标记是在指数尺度上变化，那么可将输出标记的对数作为线性模型逼近的目标，即：
+\stepcounter{equation}
+\begin{equation}
+  \ln y = \pmb{w}^T\pmb{x} + b
+\end{equation}
+
+这就是\textbf{对数线性回归（log-linear regression）}，它实际上是在试图让 $e^{\pmb{w}^T\pmb{x}+b}$ 逼近 $y$。式(3.14)在形式上仍然是线性回归，
+但是实际是在求取输入空间到输出空间的非线性函数映射。如图示，这里的对数函数起到了将线性回归模型的预测值与真实标记联系起来的作用：
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.5\textwidth]{\subfix{../images/log-linear-regression.png}}\par
+  对数线性回归示意图
+\end{figure}
+
+通常而言，考虑单调可微函数 $g(\cdot)$，令
+\begin{equation}
+  y = g^{-1}(\pmb{w}^T\pmb{x} + b)
+\end{equation}
+这样得到的模型称为\textbf{广义线性模型（generalized linear model）}，其中函数 $g(\cdot)$ 称为\textbf{联系函数（link function）}。
+显然，对数线性回归是广义线性模型在 $g(\cdot) = \ln(\cdot)$ 时的特例。
+
+注： 广义线性模型常用于分类任务。
+
+\subsection{对数几率回归}
+
+WIP
 
 \end{document}
