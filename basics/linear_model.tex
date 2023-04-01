@@ -1,6 +1,6 @@
-% @file:		linear_model.tex
+% @file:	linear_model.tex
 % @author:	Jacob Xie
-% @date:		2023/03/30 23:55:31 Thursday
+% @date:	2023/03/30 23:55:31 Thursday
 % @brief:
 
 
@@ -271,10 +271,63 @@ $\frac{\partial\pmb{x}^T\pmb{A}\pmb{x}}{\partial\pmb{x}} = (\pmb{A} + \pmb{A}^T)
 这样得到的模型称为\textbf{广义线性模型（generalized linear model）}，其中函数 $g(\cdot)$ 称为\textbf{联系函数（link function）}。
 显然，对数线性回归是广义线性模型在 $g(\cdot) = \ln(\cdot)$ 时的特例。
 
-注： 广义线性模型常用于分类任务。
+注： 广义线性模型常用于回归任务。
 
 \subsection{对数几率回归}
 
-WIP
+对于分类任务，只需要找一个单调可微函数将分类任务的真实标记 $y$ 与线性回归模型的预测值联系起来。
+
+单位跃迁函数（unit-step function）:
+\begin{equation}
+  y =
+  \begin{cases}
+    0,   & z < 0; \\
+    0.5, & z = 0; \\
+    1,   & z > 0;
+  \end{cases}
+\end{equation}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{\subfix{../images/unit-step-and-logistic.png}}\par
+  单位跃迁函数与对数几率函数
+\end{figure}
+
+如图示，单位跃迁函数不连续，因此不能直接用作于式(3.15)中的 $g^-(\cdot)$。使用\textbf{对数几率函数（logistic function）}进行替代：
+\begin{equation}
+  y = \frac{1}{1+e^{-z}}
+\end{equation}
+
+对数几率函数是一种“Sigmoid 函数”，即\textit{将 $z$ 值转化为一个接近 $0$ 或 $1$ 的 $y$ 值，且其输出值在 $z=0$ 附近变化陡峭}。
+
+将对数几率函数作为 $g^-(\cdot)$ 代入式(3.15)，得：
+\begin{equation}
+  \begin{split}
+    y & = g^{-1}(\pmb{w}^T\pmb{x}+b) \\
+    & = \frac{1}{1 + e^{-\pmb{w}^T\pmb{x}+b}}
+  \end{split}
+\end{equation}
+
+类似于式(3.14)，式(3.18)可变化为
+\begin{equation}
+  \begin{split}
+    y & = \frac{1}{1 + e^{-\pmb{w}^T\pmb{x}+b}} \\
+    \frac{1}{y} & = 1 + e^{-\pmb{w}^T\pmb{x}+b} \\
+    \frac{1-y}{y} & = e^{-\pmb{w}^T\pmb{x}+b} \\
+    \frac{y}{1-y} & = e^{\pmb{w}^T\pmb{x}+b} \\
+    \ln\frac{y}{1-y} & = \pmb{w}^T\pmb{x}+b
+  \end{split}
+\end{equation}
+
+\textit{若将 $y$ 视为样本 $\pmb{x}$} 作为正例的可能性，那么 $1-y$ 则是其反例的可能性，两者的比值
+\begin{equation}
+  \frac{y}{1-y}
+\end{equation}
+称为\textbf{几率（odds）}，反应了 $\pmb{x}$ 作为正例的相对可能性。对几率取对数则得到\textbf{对数几率（log odds，亦称 logit）}
+\begin{equation}
+  \ln\frac{y}{1-y}
+\end{equation}
+
+% TODO
 
 \end{document}
