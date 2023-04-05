@@ -328,6 +328,162 @@ $\frac{\partial\pmb{x}^T\pmb{A}\pmb{x}}{\partial\pmb{x}} = (\pmb{A} + \pmb{A}^T)
   \ln\frac{y}{1-y}
 \end{equation}
 
-% TODO
+式(3.18)实际上是用线性回归模型的预测结果去逼近真实标记的对数几率，因此对应的模型称为\textbf{对数几率回归（logistic regression，
+  也称 logit regression）}，虽然名字是“回归”，但实际上是一种分类学习方法。
+
+将式(3.18)中的 $y$ 视为类后验概率估计 $p(y=1|\pmb{x})$，则有
+\begin{equation}
+  \ln\frac{p(y=1|\pmb{x})}{p(y=0|\pmb{x})} = \pmb{x}^T \pmb{x} + b
+\end{equation}
+
+那么
+\begin{equation}
+  \begin{split}
+    p(y=1|\pmb{x}) & = \frac{1}{1+e^{-(\pmb{w}^T\pmb{x}+b)}} \\
+    & = \frac{1}{1+\frac{1}{e^{\pmb{w}^T\pmb{x}+b}}} \\
+    & = \frac{e^{\pmb{w}^T\pmb{x}+b}}{e^{\pmb{w}^T\pmb{x}+b} + 1}
+  \end{split}
+\end{equation}
+以及
+\begin{equation}
+  \begin{split}
+    p(y=0|\pmb{x}) & = 1 - y \\
+    & = 1 - \frac{e^{\pmb{w}^T\pmb{x}+b}}{e^{\pmb{w}^T\pmb{x}+b} + 1} \\
+    & = \frac{1}{e^{\pmb{w}^T\pmb{x}+b} + 1}
+  \end{split}
+\end{equation}
+
+通过\textbf{极大似然法（maximum likelihood method）}估计 $\pmb{x}$ 与 $b$。给定数据集 $\{\pmb{x}_i,y_i\}_{i=1}^m$，
+最大化\textbf{对数似然（log-likelihood）}
+\begin{equation}
+  l(\pmb{x},b) = \sum_{i=1}^{m}\ln p(y_i\ |\ \pmb{x}_i;\pmb{w}, b)
+\end{equation}
+即\textit{令每个样本属于其真实标记的概率越大越好}。
+
+\begin{anote}
+  极大似然估计：
+
+  给定一个概率分布 $D$，已知其概率密度函数（连续分布）或者概率质量函数（离散分布）为 $f_D$，以及一个分布参数 $\theta$，
+  从这个分布中抽取一个具有 $n$ 个值的采样 $\pmb{X}_1,\pmb{X}_2,\dots,\pmb{X}_n$，利用 $f_D$ 计算出其似然函数：
+  \begin{equation*}
+    \pmb{L}(\theta\ |\ x_1,\dots,x_n) = f_{\theta}(x_1,\dots,x_n)
+  \end{equation*}
+
+  如果 $D$ 是离散分布，$f_{\theta}$ 是参数为 $\theta$ 时观测到这一采样的概率；如果是连续副本，$f_{\theta}$ 则为
+  $\pmb{X}_1,\pmb{X}_2,\dots,\pmb{X}_n$ 联合分布的概率密度函数在观察值处的取值。一旦获得 $\pmb{X}_1,\pmb{X}_2,\dots,\pmb{X}_n$
+  就能求得一个关于 $\theta$ 的估计。最大似然估计会寻找关于 $\theta$ 的最困难的值，即在所有可能的 $\theta$ 取值中，寻找一个值
+  使这个采样的“可能性”最大化。在 $\theta$ 的所有可能取值中寻找一个值使得似然函数取到最大值。这个使可能性最大的 $\hat{\theta}$ 值
+  即成为 $\theta$ 的\textbf{最大似然估计}。
+\end{anote}
+
+令 $\beta = (\pmb{w};b),\ \hat{x} = (\pmb{x};1)$，那么
+\begin{equation*}
+  \begin{split}
+    \pmb{w}^T\pmb{x} + b & = (\pmb{w}^T;b) \cdot (\pmb{x};1) \\
+    & = (\pmb{w};b)^T \cdot (\pmb{x};1) \\
+    & = \beta^T\hat{\pmb{x}}
+  \end{split}
+\end{equation*}
+
+令
+\begin{equation}
+  \begin{split}
+    p(y_i\ |\ \pmb{x}_i;\pmb{w},b) & =
+    \begin{cases}
+      p_1(\hat{\pmb{x}};\beta) = p(y=1\ |\ \hat{\pmb{x}};\beta), & y_i = 1 \\
+      p_0(\hat{\pmb{x}};\beta) = p(y=0\ |\ \hat{\pmb{x}};\beta), & y_i = 0
+    \end{cases} \\
+    & = p(y = 1\ |\ \hat{\pmb{x}};\beta) \cdot y_i + p(y=0\ |\ \hat{\pmb{x}};\beta) \cdot (1-y_i) \\
+    & = y_i p_1(\hat{\pmb{x}}_i;\beta) + (1-y_i) p_0(\hat{\pmb{x}}_i;\beta)
+  \end{split}
+\end{equation}
+
+\newpage
+
+式(3.26)代入式(3.25)，再将式(3.23)与式(3.24)代入
+
+\begin{equation*}
+  \begin{split}
+    l(\pmb{x},b) & = \sum_{i=1}^{m}\ln(y_i p_1(\hat{\pmb{x}}_i;\beta) + (1-y_i) p_0(\hat{\pmb{x}}_i;\beta)) \\
+    & = \sum_{i=1}^{m}\ln(
+    y_i \cdot \frac{e^{\pmb{w}^T\pmb{x}+b}}{e^{\pmb{w}^T\pmb{x}+b} + 1} +
+    (1-y_i) \cdot \frac{1}{e^{\pmb{w}^T\pmb{x}+b} + 1}
+    ) \\
+    & = \sum_{i=1}^{m}\ln(
+    y_i \cdot \frac{e^{\beta^T\hat{\pmb{x}}_i}}{e^{\beta^T\hat{\pmb{x}}_i} + 1} +
+    (1-y_i) \cdot \frac{1}{e^{\beta^T\hat{\pmb{x}}_i} + 1}
+    ) \\
+    & = \sum_{i=1}^{m}\ln(
+    \frac{y_i e^{\beta^T\hat{\pmb{x}}_i} + 1 - y_i}{e^{\beta^T\hat{\pmb{x}}_i} + 1}
+    ) \\
+    & = \sum_{i=1}^{m}\Big[
+      \ln(y_i e^{\beta^T\hat{\pmb{x}}_i} + 1 - y_i) - \ln(e^{\beta^T\hat{\pmb{x}}_i} + 1)
+      \Big] \\
+    & = \begin{cases}
+      \sum_{i=1}^{m}(\ln(0+1-0) - \ln(1+e^{\beta^T\hat{\pmb{x}}_i})),                          & y_i = 0 \\
+      \sum_{i=1}^{m}(\ln(e^{\beta^T\hat{\pmb{x}}_i}+1-1) - \ln(1+e^{\beta^T\hat{\pmb{x}}_i})), & y_i = 1
+    \end{cases} \\
+    & = \begin{cases}
+      \sum_{i=1}^{m}(-\ln(1+e^{\beta^T\hat{\pmb{x}}_i})),                         & y_i = 0 \\
+      \sum_{i=1}^{m}(\beta^T\hat{\pmb{x}}_i - \ln(1+e^{\beta^T\hat{\pmb{x}}_i})), & y_i = 1
+    \end{cases} \\
+    & = \sum_{i=1}^{m} (y_i \beta^T\hat{\pmb{x}}_i - \ln(1+e^{\beta^T\hat{\pmb{x}}_i}))
+  \end{split}
+\end{equation*}
+
+最大化式(3.35)等价于最小化
+\begin{equation}
+  l(\beta) = \sum_{i=1}^{m} (-y_i \beta^T\hat{\pmb{x}}_i + \ln(1+e^{\beta^T\hat{\pmb{x}}_i}))
+\end{equation}
+
+\newpage
+
+\begin{anote}
+  另一种更快的解法，改写式(3.26)为：
+  \[
+    p(y_i\ |\ \pmb{x}_i;\pmb{w},b) = (p_1(\hat{\pmb{x}}_i;\beta))^{y_i} \cdot (p_0(\hat{\pmb{x}}_i;\beta))^{1-y_i}
+  \]
+
+  \begin{equation*}
+    \begin{split}
+      l(\pmb{x},b) & = \sum_{i=1}^{m}\ln((p_1(\hat{\pmb{x}}_i;\beta))^{y_i} \cdot (p_0(\hat{\pmb{x}}_i;\beta))^{1-y_i}) \\
+      & = \sum_{i=1}^{m}\Big[
+        y_i \ln(p_1(\hat{\pmb{x}}_i;\beta)) + (1-y_i) \ln(p_0(\hat{\pmb{x}}_i;\beta))
+        \Big] \\
+      & = \sum_{i=1}^{m}\Big[
+        y_i \ln(p_1(\hat{\pmb{x}}_i;\beta)) + \ln(p_0(\hat{\pmb{x}}_i;\beta)) - y_i \ln(p_0(\hat{\pmb{x}}_i;\beta))
+        \Big] \\
+      & = \sum_{i=1}^{m}\Big[
+        y_i \ln(\frac{p_1(\hat{\pmb{x}}_i;\beta)}{p_0(\hat{\pmb{x}}_i;\beta)}) + \ln(p_0(\hat{\pmb{x}}_i;\beta))
+        \Big] \\
+      & = \sum_{i=1}^{m}\Big[
+        y_i \ln(e^{\beta^T\hat{\pmb{x}}_i}) + \ln(\frac{1}{1+e^{\beta^T\hat{\pmb{x}}_i}})
+        \Big] \\
+      & = \sum_{i=1}^{m} (y_i \beta^T\hat{\pmb{x}}_i - \ln(1+e^{\beta^T\hat{\pmb{x}}_i}))
+    \end{split}
+  \end{equation*}
+\end{anote}
+
+式(3.27) 是关于 $\beta$ 的高阶可导连续凸函数，根据凸优化理论，经典的数值优化算法如\textbf{梯度下降法（gradient descent method）}、
+\textbf{牛顿法（Newton method）}等可求得其最优解，即
+\begin{equation}
+  \beta^* = \argmin_{\beta} l(\beta)
+\end{equation}
+
+以牛顿法为例，从当前 $\beta$ 生成下一轮迭代解的更新公式为
+\begin{equation}
+  \beta^{'} = \beta -
+  \Biggl(\frac{\partial^2 l(\beta)}{\partial\beta\ \partial\beta^T}\Biggr)^{-1} \frac{\partial l(\beta)}{\partial\beta}
+\end{equation}
+
+其中关于 $\beta$ 的一二阶导数分别为
+\begin{equation}
+  \frac{\partial l(\beta)}{\partial\beta} = -\sum_{i=1}^{m}\hat{\pmb{x}}_i (y_i - p_1(\hat{\pmb{x}}_i;\beta))
+\end{equation}
+
+\begin{equation}
+  \frac{\partial^2 l(\beta)}{\partial\beta\ \partial\beta^T} =
+  \sum_{i=1}^{m} \hat{\pmb{x}}_i \hat{\pmb{x}}_i^T p_1(\hat{\pmb{x}}_i;\beta)(1-p_1(\hat{\pmb{x}}_i;\beta))
+\end{equation}
 
 \end{document}
