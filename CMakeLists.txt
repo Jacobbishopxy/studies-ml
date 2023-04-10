@@ -30,7 +30,13 @@ if(DOWNLOAD_DATASETS)
     add_custom_target(
         imagenette COMMAND ${CMAKE_COMMAND}
         -D DATA_DIR=${DATA_DIR}
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/imagenette.cmake
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/fetch_imagenette.cmake
+    )
+    # sifar10
+    add_custom_target(
+        cifar10 COMMAND ${CMAKE_COMMAND}
+        -D DATA_DIR=${DATA_DIR}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/fetch_cifar10.cmake
     )
 endif()
 
