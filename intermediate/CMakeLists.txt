@@ -24,6 +24,9 @@ add_executable(${DRN})
 target_sources(
     ${DRN} PRIVATE
     deep_residual_network/cifar10.h
+    deep_residual_network/residual_block.h
+    deep_residual_network/resnet.h
+    deep_residual_network/transform.h
     deep_residual_network/deep_residual_network.cpp
 )
 target_include_directories(${DRN} PRIVATE deep_residual_network)
