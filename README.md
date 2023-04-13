@@ -57,6 +57,8 @@ Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 
     - convolutional neural network: [cpp](./intermediate/convolutional_neural_network/convolutional_neural_network.cpp) & [py](./intermediate/convolutional_neural_network/convolutional_neural_network.py)
 
+    - deep residual network: [cpp](./intermediate/deep_residual_network/deep_residual_network.cpp) & [py](./intermediate/deep_residual_network/deep_residual_network.py)
+
 1. Advanced
 
 1. Interactive
