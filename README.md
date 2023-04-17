@@ -27,7 +27,9 @@
 
 Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 
-1. LaTeX: [Main entry](./studies-ml.tex) & [PDF](./out/studies-ml.pdf)
+### Notes
+
+1. Studies of the *Watermelon* Book: [Main entry](./studies-ml.tex) & [PDF](./out/studies-ml.pdf)
 
     - [Model evaluation and selection](./starter/model_evaluation_and_selection.tex)
 
@@ -36,6 +38,10 @@ Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
     - Decision tree
 
     - [Neural networks](./intermediate/neural_networks.tex)
+
+1. Studies of *Essential Math for AI*: Not yet posted.
+
+### Codes
 
 1. Starter
 
@@ -76,6 +82,8 @@ Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 1. WatermelonBook [ch-CN]: <https://cs.nju.edu.cn/zhouzh/zhouzh.files/publication/MLbook2016.htm>
 
 1. PumpkinBook [ch-CN]: <https://github.com/datawhalechina/pumpkin-book>
+
+1. Essential Math for AI [en-US]: <https://www.oreilly.com/library/view/essential-math-for/9781098107628/>
 
 1. PyTorch: <https://pytorch.org/>
 
