@@ -39,7 +39,7 @@ main
 # LaTeX
 *.log
 **/out/*
-!/out/studies-ml.pdf
+!/out/notes-watermelon.pdf
 
 # lib & data
 libtorch
