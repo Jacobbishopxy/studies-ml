@@ -29,15 +29,15 @@ Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 
 ### Notes
 
-1. Studies of the *Watermelon* Book: [Main entry](./studies-ml.tex) & [PDF](./out/studies-ml.pdf)
+1. Studies of the *Watermelon* Book: [Main entry](./notes-watermelon.tex) & [PDF](./out/notes-watermelon.pdf)
 
-    - [Model evaluation and selection](./starter/model_evaluation_and_selection.tex)
+    - [Model evaluation and selection](./notes-watermelon/model_evaluation_and_selection.tex)
 
-    - [Linear model](./basics/linear_model.tex)
+    - [Linear model](./notes-watermelon/linear_model.tex)
 
     - Decision tree
 
-    - [Neural networks](./intermediate/neural_networks.tex)
+    - [Neural networks](./notes-watermelon/neural_networks.tex)
 
 1. Studies of *Essential Math for AI*: Not yet posted.
 
