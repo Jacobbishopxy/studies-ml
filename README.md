@@ -39,7 +39,11 @@ Note: most of the comments and `.tex` files are written in Chinese [ch-CN].
 
     - [Neural networks](./notes-watermelon/neural_networks.tex)
 
-1. Studies of *Essential Math for AI*: Not yet posted.
+1. Studies of *Essential Math for AI*: [Main entry](./notes-emfa.tex) & [PDF](./out/notes-emfa.pdf).
+
+    - Data
+
+    - Singular value decomposition
 
 ### Codes
 
